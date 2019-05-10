@@ -61,12 +61,18 @@ function createScene() {
 	hero.position.y = 1
 	hero.position.x = 2
 	hero.rotation.x = 2
+	hero.__dirtyPosition = true
 	scene.add(hero)
 
+	const texture = new THREE.TextureLoader().load('../assets/slope.jpg')
+	texture.wrapS = THREE.RepeatWrapping
+	texture.wrapT = THREE.RepeatWrapping
+	texture.repeat.set(10, 1000)
+
 	const planeMaterial = Physijs.createMaterial(
-		new THREE.MeshStandardMaterial({ color: 0x00ff00, side: THREE.DoubleSide }),
-		0.5,
-		0.1 // low restitution
+		new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide }),
+		0.1,
+		0 // low restitution
 	)
 
 	ground = new Physijs.BoxMesh(
@@ -113,7 +119,7 @@ function render() {
 	scene.simulate()
 	renderer.render(scene, camera) //draw
 	// console.log(camera.rotation)
-	// console.log(hero.position.z, 'z')
+	console.log(hero.position.x, 'x')
 	// console.log(hero.position.y, 'y')
 	camera.position.z = hero.position.z + 20
 	camera.position.y = hero.position.y + 20
@@ -142,27 +148,21 @@ function handleKeyDown(keyEvent) {
 		// pivots wheels for steering
 		case 65:
 		case 37: // "a" key or left arrow key (turn left)
-			hero.position.x = -10
+			hero.position.x = hero.position.x - 0.5
+			hero.rotation.y = hero.rotation.y - 0.05
+			hero.__dirtyPosition = true
+			hero.__dirtyRotation = true
 			break
 		case 68:
 		case 39: // "d" key  or right arrow key (turn right)
-			busArray[0].wheel_fr_constraint.configureAngularMotor(
-				1,
-				-Math.PI / 4,
-				Math.PI / 4,
-				-10,
-				200
-			)
-			busArray[0].wheel_fr_constraint.enableAngularMotor(1)
-			busArray[0].wheel_fl_constraint.configureAngularMotor(
-				1,
-				-Math.PI / 4,
-				Math.PI / 4,
-				-10,
-				200
-			)
-			busArray[0].wheel_fl_constraint.enableAngularMotor(1)
+			hero.position.x = hero.position.x + 0.5
+			hero.rotation.y = hero.rotation.y + 0.05
+			hero.__dirtyPosition = true
+			hero.__dirtyRotation = true
 			break
+		case 32:
+			hero.position.y = hero.position.y + 2
+			hero.__dirtyPosition = true
 	}
 }
 document.onkeydown = handleKeyDown
