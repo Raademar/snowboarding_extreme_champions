@@ -1,8 +1,12 @@
+import Player from './classes/Player'
+
 // Physijs.scripts.worker = 'js/physijs_worker.js'
 Physijs.scripts.ammo =
 	'https://chandlerprall.github.io/Physijs/examples/js/ammo.js'
 var blob = new Blob([document.querySelector('#physijs_worker').textContent])
 Physijs.scripts.worker = window.URL.createObjectURL(blob)
+
+console.log(Player)
 
 let sceneWidth
 let sceneHeight
@@ -72,7 +76,7 @@ function createScene() {
 	const planeMaterial = Physijs.createMaterial(
 		new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide }),
 		0.1,
-		0 // low restitution
+		1 // low restitution
 	)
 
 	ground = new Physijs.BoxMesh(
@@ -112,14 +116,14 @@ function createScene() {
 }
 
 function update() {
+	setTimeout(() => {
+		requestAnimationFrame(update) //request next update
+	}, 1000 / 30)
 	render()
-	requestAnimationFrame(update) //request next update
 }
 function render() {
 	scene.simulate()
 	renderer.render(scene, camera) //draw
-	// console.log(camera.rotation)
-	console.log(hero.position.x, 'x')
 	// console.log(hero.position.y, 'y')
 	camera.position.z = hero.position.z + 20
 	camera.position.y = hero.position.y + 20
