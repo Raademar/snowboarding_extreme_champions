@@ -3,9 +3,7 @@
 	"version": "1.0.0",
 	"description": "",
 	"main": "index.js",
-	"scripts": {
-		"build": "rollup --config rollup.config.js"
-	},
+	"scripts": {},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Raademar/snowboarding_extreme_champions.git"
@@ -17,6 +15,7 @@
 	},
 	"homepage": "https://github.com/Raademar/snowboarding_extreme_champions#readme",
 	"dependencies": {
-		"rollup": "^1.11.3"
-	}
+		"three": "^0.104.0"
+	},
+	"devDependencies": {}
 }
