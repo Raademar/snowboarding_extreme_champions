@@ -6,8 +6,6 @@ Physijs.scripts.ammo =
 var blob = new Blob([document.querySelector('#physijs_worker').textContent])
 Physijs.scripts.worker = window.URL.createObjectURL(blob)
 
-console.log(Player)
-
 let sceneWidth
 let sceneHeight
 let camera
@@ -18,7 +16,6 @@ let hero
 let sun
 let ground
 let orbitControl
-let physics
 
 let groundWidth = 50
 
