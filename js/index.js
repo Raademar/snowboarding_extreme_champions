@@ -1,5 +1,6 @@
 import Physijs from './physi.js'
 import OrbitControls from './controls/OrbitControls.js'
+import GLTFLoader from './GLTFLoader.js'
 import * as THREE from 'https://unpkg.com/three@0.104.0/build/three.module.js'
 
 class Player extends THREE.Object3D {
@@ -17,12 +18,10 @@ class Player extends THREE.Object3D {
 		this.mesh.__dirtyPosition = true
 	}
 	addTo(scene) {
-    scene.add(this.mesh);
+		scene.add(this.mesh)
 	}
 
-	updatePosition() {
-		
-	}
+	updatePosition() {}
 }
 
 // class Tree extends THREE.Object3D {
@@ -76,6 +75,7 @@ let sun
 let ground
 let orbitControl
 let tree
+let emoji
 
 let groundWidth = 50
 
@@ -87,6 +87,11 @@ function init() {
 	//call game loop
 	update()
 }
+
+const loader = new GLTFLoader()
+loader.load('../assets/Thonker.glb', function(gltf) {
+	scene.add(gltf.scene)
+})
 
 function createScene() {
 	scene = new Physijs.Scene()
@@ -125,8 +130,8 @@ function createScene() {
 	// hero.__dirtyPosition = true
 
 	hero = new Player(1, 2, 2)
-	console.log(hero);
-	
+	console.log(hero)
+
 	hero.addTo(scene)
 
 	// tree = new Tree()
