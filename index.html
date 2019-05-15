@@ -16,9 +16,12 @@
 		</style>
 	</head>
 	<body>
-		<script src="js/three.js"></script>
-		<script src="https://chandlerprall.github.io/Physijs/physi.js"></script>
-		<script src="js/controls/OrbitControls.js"></script>
+		<script
+			type="module"
+			src="https://unpkg.com/three@0.104.0/build/three.module.js"
+		></script>
+		<script type="module" src="js/physi.js"></script>
+		<script type="module" src="js/controls/OrbitControls.js"></script>
 		<script type="javascript/worker" id="physijs_worker">
 			var transferableMessage = self.webkitPostMessage || self.postMessage,
 				// enum
@@ -1458,7 +1461,9 @@
 				}
 			}
 		</script>
-		<script src="public/js/index.js"></script>
+		<script type="module" src="js/classes/Player.js"></script>
+		<script type="module" src="js/classes/Tree.js"></script>
+		<script type="module" src="js/index.js"></script>
 
 		<script>
 			// Our Javascript will go here.

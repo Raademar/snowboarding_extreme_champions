@@ -1,12 +1,69 @@
-import Player from './classes/Player'
+import Physijs from './physi.js'
+import OrbitControls from './controls/OrbitControls.js'
+import * as THREE from 'https://unpkg.com/three@0.104.0/build/three.module.js'
 
+class Player extends THREE.Object3D {
+	constructor(y, x, rotationX) {
+		super()
+		this.geometry = new THREE.BoxGeometry(1, 0.2, 3)
+		this.material = new THREE.MeshBasicMaterial({ color: 0x883333 })
+		this.mesh = new Physijs.BoxMesh(this.geometry, this.heroMaterial)
+
+		this.mesh.castShadow = true
+		this.mesh.receiveShadow = false
+		this.mesh.position.y = y
+		this.mesh.position.x = x
+		this.mesh.rotation.x = rotationX
+		this.mesh.__dirtyPosition = true
+	}
+	addTo(scene) {
+    scene.add(this.mesh);
+	}
+
+	updatePosition() {
+		
+	}
+}
+
+// class Tree extends THREE.Object3D {
+// 	constructor() {
+// 		super()
+// 		this.geo = new THREE.Geometry()
+
+// 		this.level1 = new THREE.ConeGeometry(1.5, 2, 4)
+// 		level1.faces.forEach(f => f.color.set(0x00ff00))
+// 		level1.translate(0, 4, 0)
+// 		geo.merge(level1)
+
+// 		this.level2 = new THREE.ConeGeometry(2, 2, 4)
+// 		level2.faces.forEach(f => f.color.set(0x00ff00))
+// 		level2.translate(0, 3, 0)
+// 		geo.merge(level2)
+
+// 		this.level3 = new THREE.ConeGeometry(3, 2, 4)
+// 		level3.faces.forEach(f => f.color.set(0x00ff00))
+// 		level3.translate(0, 2, 0)
+// 		geo.merge(level3)
+
+// 		this.trunk = new THREE.CylinderGeometry(0.5, 0.5, 2)
+// 		trunk.faces.forEach(f => f.color.set(0xbb6600))
+// 		trunk.translate(0, 0, 0)
+// 		geo.merge(trunk)
+
+// 		this.group = new THREE.Mesh(
+// 			geo,
+// 			new THREE.MeshLambertMaterial({
+// 				vertexColors: THREE.VertexColors
+// 			})
+// 		)
+// 		return group
+// 	}
+// }
 // Physijs.scripts.worker = 'js/physijs_worker.js'
 Physijs.scripts.ammo =
 	'https://chandlerprall.github.io/Physijs/examples/js/ammo.js'
 var blob = new Blob([document.querySelector('#physijs_worker').textContent])
 Physijs.scripts.worker = window.URL.createObjectURL(blob)
-
-console.log(Player)
 
 let sceneWidth
 let sceneHeight
@@ -18,7 +75,7 @@ let hero
 let sun
 let ground
 let orbitControl
-let physics
+let tree
 
 let groundWidth = 50
 
@@ -57,16 +114,23 @@ function createScene() {
 	renderer.setSize(window.innerWidth, window.innerHeight)
 	document.body.appendChild(renderer.domElement)
 
-	const heroGeometry = new THREE.BoxGeometry(1, 0.2, 3)
-	const heroMaterial = new THREE.MeshBasicMaterial({ color: 0x883333 })
-	hero = new Physijs.BoxMesh(heroGeometry, heroMaterial)
-	hero.castShadow = true
-	hero.receiveShadow = false
-	hero.position.y = 1
-	hero.position.x = 2
-	hero.rotation.x = 2
-	hero.__dirtyPosition = true
-	scene.add(hero)
+	// const heroGeometry = new THREE.BoxGeometry(1, 0.2, 3)
+	// const heroMaterial = new THREE.MeshBasicMaterial({ color: 0x883333 })
+	// hero = new Physijs.BoxMesh(heroGeometry, heroMaterial)
+	// hero.castShadow = true
+	// hero.receiveShadow = false
+	// hero.position.y = 1
+	// hero.position.x = 2
+	// hero.rotation.x = 2
+	// hero.__dirtyPosition = true
+
+	hero = new Player(1, 2, 2)
+	console.log(hero);
+	
+	hero.addTo(scene)
+
+	// tree = new Tree()
+	// scene.add(tree)
 
 	const texture = new THREE.TextureLoader().load('../assets/slope.jpg')
 	texture.wrapS = THREE.RepeatWrapping
@@ -104,7 +168,7 @@ function createScene() {
 	sun.shadow.camera.near = 0.5
 	sun.shadow.camera.far = 1000
 
-	orbitControl = new THREE.OrbitControls(camera, renderer.domElement) //helper to rotate around in scene
+	orbitControl = new OrbitControls(camera, renderer.domElement) //helper to rotate around in scene
 	orbitControl.update()
 	orbitControl.addEventListener('change', render)
 	orbitControl.enableZoom = false
