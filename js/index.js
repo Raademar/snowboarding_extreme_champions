@@ -3,7 +3,7 @@ import OrbitControls from './controls/OrbitControls.js'
 import * as THREE from 'https://unpkg.com/three@0.104.0/build/three.module.js'
 
 class Player extends THREE.Object3D {
-	constructor() {
+	constructor(y, x, rotationX) {
 		super()
 		this.geometry = new THREE.BoxGeometry(1, 0.2, 3)
 		this.material = new THREE.MeshBasicMaterial({ color: 0x883333 })
@@ -11,10 +11,17 @@ class Player extends THREE.Object3D {
 
 		this.mesh.castShadow = true
 		this.mesh.receiveShadow = false
-		this.mesh.position.y = 1
-		this.mesh.position.x = 2
-		this.mesh.rotation.x = 2
+		this.mesh.position.y = y
+		this.mesh.position.x = x
+		this.mesh.rotation.x = rotationX
 		this.mesh.__dirtyPosition = true
+	}
+	addTo(scene) {
+    scene.add(this.mesh);
+	}
+
+	updatePosition() {
+		
 	}
 }
 
@@ -117,10 +124,10 @@ function createScene() {
 	// hero.rotation.x = 2
 	// hero.__dirtyPosition = true
 
-	hero = new Player()
+	hero = new Player(1, 2, 2)
 	console.log(hero);
 	
-	scene.add(hero)
+	hero.addTo(scene)
 
 	// tree = new Tree()
 	// scene.add(tree)
