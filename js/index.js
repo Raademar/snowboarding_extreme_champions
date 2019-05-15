@@ -24,40 +24,64 @@ class Player extends THREE.Object3D {
 	updatePosition() {}
 }
 
-// class Tree extends THREE.Object3D {
-// 	constructor() {
-// 		super()
-// 		this.geo = new THREE.Geometry()
+class Tree extends THREE.Object3D {
+	constructor(x, y, z) {
+		super()
+		this.geo = new THREE.Geometry()
 
-// 		this.level1 = new THREE.ConeGeometry(1.5, 2, 4)
-// 		level1.faces.forEach(f => f.color.set(0x00ff00))
-// 		level1.translate(0, 4, 0)
-// 		geo.merge(level1)
+		this.level1 = new THREE.ConeGeometry(1.5, 2, 4)
+		this.level1.faces.forEach(f => f.color.set(0x00ff00))
+		this.level1.translate(0, 4, 0)
+		this.geo.merge(this.level1)
 
-// 		this.level2 = new THREE.ConeGeometry(2, 2, 4)
-// 		level2.faces.forEach(f => f.color.set(0x00ff00))
-// 		level2.translate(0, 3, 0)
-// 		geo.merge(level2)
+		this.level2 = new THREE.ConeGeometry(2, 2, 4)
+		this.level2.faces.forEach(f => f.color.set(0x00ff00))
+		this.level2.translate(0, 3, 0)
+		this.geo.merge(this.level2)
 
-// 		this.level3 = new THREE.ConeGeometry(3, 2, 4)
-// 		level3.faces.forEach(f => f.color.set(0x00ff00))
-// 		level3.translate(0, 2, 0)
-// 		geo.merge(level3)
+		this.level3 = new THREE.ConeGeometry(3, 2, 4)
+		this.level3.faces.forEach(f => f.color.set(0x00ff00))
+		this.level3.translate(0, 2, 0)
+		this.geo.merge(this.level3)
 
-// 		this.trunk = new THREE.CylinderGeometry(0.5, 0.5, 2)
-// 		trunk.faces.forEach(f => f.color.set(0xbb6600))
-// 		trunk.translate(0, 0, 0)
-// 		geo.merge(trunk)
+		this.trunk = new THREE.CylinderGeometry(0.5, 0.5, 2)
+		this.trunk.faces.forEach(f => f.color.set(0xbb6600))
+		this.trunk.translate(0, 0, 0)
+		this.geo.merge(this.trunk)
 
-// 		this.group = new THREE.Mesh(
-// 			geo,
-// 			new THREE.MeshLambertMaterial({
-// 				vertexColors: THREE.VertexColors
-// 			})
-// 		)
-// 		return group
-// 	}
-// }
+		this.group = new THREE.Mesh(
+			this.geo,
+			new THREE.MeshLambertMaterial({
+				vertexColors: THREE.VertexColors
+			})
+		)
+		this.group.position.x = x
+		this.group.position.y = y
+		this.group.position.z = z
+
+		return this.group
+	}
+}
+
+class Camera extends THREE.PerspectiveCamera {
+	constructor(fov, aspect, near, far) {
+		super(fov, aspect, near, far)
+
+		// this.distanceToPlayer = 15;
+		this.distanceToPlayer = 10
+		this.position.set(0, 20, 60)
+		this.zoom = 10
+		this.position.y = 40
+		this.rotateX(1.2)
+	}
+
+	update() {
+		this.position.z = hero.mesh.position.z + 20
+		this.position.y = hero.mesh.position.y + 20
+		this.position.x = hero.mesh.position.x
+	}
+}
+
 // Physijs.scripts.worker = 'js/physijs_worker.js'
 Physijs.scripts.ammo =
 	'https://chandlerprall.github.io/Physijs/examples/js/ammo.js'
@@ -75,6 +99,7 @@ let sun
 let ground
 let orbitControl
 let tree
+let trees = []
 let emoji
 
 let groundWidth = 50
@@ -90,6 +115,8 @@ function init() {
 
 const loader = new GLTFLoader()
 loader.load('../assets/Thonker.glb', function(gltf) {
+	const emoji = gltf.scenes[0].children[0]
+	emoji.position.y = 3
 	scene.add(gltf.scene)
 })
 
@@ -97,19 +124,7 @@ function createScene() {
 	scene = new Physijs.Scene()
 	scene.setGravity(new THREE.Vector3(0, -10, 0))
 	scene.fog = new THREE.FogExp2(0xf0fff0, 0.005)
-	camera = new THREE.PerspectiveCamera(
-		35,
-		window.innerWidth / window.innerHeight,
-		0.1,
-		1000
-	)
-	camera.position.set(0, 20, 60)
-	camera.zoom = 10
-
-	camera.position.y = 40
-	// camera.position.x = 10
-	// camera.rotation.z = 10
-	camera.rotateX(1.2)
+	camera = new Camera(35, window.innerWidth / window.innerHeight, 0.1, 1000)
 
 	renderer = new THREE.WebGLRenderer({ alpha: true })
 	renderer.setClearColor(0x000000, 0)
@@ -119,23 +134,14 @@ function createScene() {
 	renderer.setSize(window.innerWidth, window.innerHeight)
 	document.body.appendChild(renderer.domElement)
 
-	// const heroGeometry = new THREE.BoxGeometry(1, 0.2, 3)
-	// const heroMaterial = new THREE.MeshBasicMaterial({ color: 0x883333 })
-	// hero = new Physijs.BoxMesh(heroGeometry, heroMaterial)
-	// hero.castShadow = true
-	// hero.receiveShadow = false
-	// hero.position.y = 1
-	// hero.position.x = 2
-	// hero.rotation.x = 2
-	// hero.__dirtyPosition = true
-
 	hero = new Player(1, 2, 2)
-	console.log(hero)
 
 	hero.addTo(scene)
 
-	// tree = new Tree()
-	// scene.add(tree)
+	tree = new Tree()
+	scene.add(tree)
+	tree.position.z = -400
+	console.log(tree)
 
 	const texture = new THREE.TextureLoader().load('../assets/slope.jpg')
 	texture.wrapS = THREE.RepeatWrapping
@@ -155,13 +161,9 @@ function createScene() {
 	)
 	ground.receiveShadow = true
 	ground.castShadow = false
-	// ground.rotation. = -90
+
 	ground.rotateX(-Math.PI / 2 - 10)
 	scene.add(ground)
-
-	//Math.PI / 3
-
-	// camera.rotation.z = hero.rotation.z
 
 	sun = new THREE.PointLight(0xffffff, 1, 0)
 	sun.position.set(10, 60, 10)
@@ -185,6 +187,18 @@ function createScene() {
 }
 
 function update() {
+	trees.push(
+		new Tree(
+			hero.mesh.position.x + 5,
+			hero.mesh.position.y + 2,
+			hero.mesh.position.z
+		)
+	)
+	for (let i = 0; i < trees.length; i++) {
+		scene.add(trees[i])
+	}
+
+	camera.update()
 	setTimeout(() => {
 		requestAnimationFrame(update) //request next update
 	}, 1000 / 30)
@@ -193,12 +207,6 @@ function update() {
 function render() {
 	scene.simulate()
 	renderer.render(scene, camera) //draw
-	// console.log(hero.position.y, 'y')
-	camera.position.z = hero.position.z + 20
-	camera.position.y = hero.position.y + 20
-	camera.position.x = hero.position.x
-	// camera.rotation.z = hero.position.x
-	// camera.position.z = hero.position.z + 5
 }
 function onWindowResize() {
 	//resize & align
