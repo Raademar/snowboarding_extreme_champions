@@ -101,6 +101,7 @@ let ground
 let orbitControl
 let tree
 let trees = []
+let isTurning = false
 
 let groundWidth = 50
 
@@ -217,6 +218,17 @@ function update() {
   render()
 }
 function render() {
+
+  console.log(hero.mesh.rotation)
+
+  if(hero.mesh.rotation.y > 0.2){
+    hero.mesh.rotation.y -= 0.01
+  }
+
+  if(hero.mesh.rotation.y < -0.2){
+    hero.mesh.rotation.y += 0.01
+  }
+
   scene.simulate()
   renderer.render(scene, camera) //draw
 }
@@ -230,32 +242,59 @@ function onWindowResize() {
 }
 
 function handleKeyDown(keyEvent) {
-  // sets wheel motors; configureAngularMotor params are:
-  //   1) which_motor (as numbers matched to axes: 0 = x, 1 = y, 2 = z)
-  //   2) low_limit (lower limit of the motor)
-  //   3) high_limit (upper limit of the motor)
-  //   4) velocity (target velocity)
-  //   5) max_force (maximum force the motor can apply)
-  switch (keyEvent.keyCode) {
-    // BUS 1
-    // pivots wheels for steering
-    case 65:
-    case 37: // "a" key or left arrow key (turn left)
-      hero.position.x = hero.position.x - 0.5
-      hero.rotation.y = hero.rotation.y - 0.05
-      hero.__dirtyPosition = true
-      hero.__dirtyRotation = true
-      break
-    case 68:
-    case 39: // "d" key  or right arrow key (turn right)
-      hero.position.x = hero.position.x + 0.5
-      hero.rotation.y = hero.rotation.y + 0.05
-      hero.__dirtyPosition = true
-      hero.__dirtyRotation = true
-      break
-    case 32:
-      hero.position.y = hero.position.y + 2
-      hero.__dirtyPosition = true
-  }
+
+	switch (keyEvent.keyCode) {
+		case 65:
+		case 37: // "a" key or left arrow key (turn left)
+
+		isTurning = true
+
+		hero.mesh.setLinearVelocity(new THREE.Vector3(-10, hero.mesh.getLinearVelocity().y, hero.mesh.getLinearVelocity().z))
+
+		break;
+
+		case 68:
+
+		isTurning = true
+
+
+		hero.mesh.setLinearVelocity(new THREE.Vector3(10, hero.mesh.getLinearVelocity().y, hero.mesh.getLinearVelocity().z))
+
+
+		break;
+		case 32:
+
+		isTurning = true
+
+		hero.mesh.setLinearVelocity({x:0, y:0, z:-30})
+
+		break;
+
+	}
 }
+
+function handleKeyUp(keyEvent){
+
+   switch( keyEvent.keyCode ) {
+		case 65:
+
+		isTurning = false
+
+		hero.mesh.setLinearVelocity(new THREE.Vector3(0, hero.mesh.getLinearVelocity().y, hero.mesh.getLinearVelocity().z))
+		hero.mesh.setAngularVelocity(new THREE.Vector3(0, 0, 0))
+
+			break;
+
+ 		case 68: // "a" key or left arrow key (turn left)
+
+		isTurning = false
+
+		hero.mesh.setLinearVelocity(new THREE.Vector3(0, hero.mesh.getLinearVelocity().y, hero.mesh.getLinearVelocity().z))
+		hero.mesh.setAngularVelocity(new THREE.Vector3(0, 0, 0))
+
+ 		break;
+	}
+}
+
 document.onkeydown = handleKeyDown
+document.onkeyup = handleKeyUp
