@@ -1,0 +1,21 @@
+{
+	"name": "game_over",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Raademar/snowboarding_extreme_champions.git"
+	},
+	"author": "Mattias Rådemar & Gustav Svendsen",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/Raademar/snowboarding_extreme_champions/issues"
+	},
+	"homepage": "https://github.com/Raademar/snowboarding_extreme_champions#readme",
+	"dependencies": {
+		"three": "^0.104.0"
+	},
+	"devDependencies": {}
+}
