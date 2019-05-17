@@ -70,7 +70,7 @@ class Tree extends THREE.Object3D {
 		this.group.position.z = z
 		this.group.rotation.x = -19.4
 		this.group.name = 'tree'
-		// this.group.receiveShadow = true
+		this.group.receiveShadow = true
 		this.group.castShadow = true
 
 		return this.group
@@ -115,6 +115,7 @@ let orbitControl
 let tree
 let trees = []
 let isTurning = false
+let isGrounded = true
 
 let groundWidth = 50
 
@@ -237,6 +238,9 @@ function render() {
 		hero.mesh.rotation.y -= 0.01
 	}
 
+  ground.receiveShadow = true
+	ground.castShadow = true
+
 	if (hero.mesh.rotation.y < -0.2) {
 		hero.mesh.rotation.y += 0.01
 	}
@@ -252,6 +256,15 @@ function onWindowResize() {
 	camera.aspect = sceneWidth / sceneHeight
 	camera.updateProjectionMatrix()
 }
+
+ground.name = "ground"
+
+hero.mesh.addEventListener( 'collision', function( other_object, linear_velocity, angular_velocity ) {
+    if(other_object.name == "ground"){
+      isGrounded = true
+    }
+});
+
 
 function handleKeyDown(keyEvent) {
 	switch (keyEvent.keyCode) {
@@ -284,7 +297,10 @@ function handleKeyDown(keyEvent) {
 		case 32:
 			isTurning = true
 
-			hero.mesh.setLinearVelocity({ x: 0, y: 0, z: -10 })
+      if(isGrounded){
+        isGrounded = false
+        hero.mesh.setLinearVelocity({ x: 0, y: 0, z: -10 })
+      }
 
 			break
 	}
