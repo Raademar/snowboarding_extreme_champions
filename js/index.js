@@ -49,11 +49,12 @@ class Tree extends THREE.Object3D {
     this.trunk.translate(0, 0, 0)
     this.geo.merge(this.trunk)
 
-    this.group = new THREE.Mesh(
+    this.group = new Physijs.BoxMesh(
       this.geo,
       new THREE.MeshLambertMaterial({
         vertexColors: THREE.VertexColors
-      })
+      }),
+      0
     )
     this.group.position.x = x
     this.group.position.y = y
@@ -189,10 +190,10 @@ function generateRandomNumber(multiplier) {
   return Math.ceil(Math.random() * multiplier)
 }
 
-for (let i = 0; i < 30; i++) {
+for (let i = 0; i < 100; i++) {
   trees.push(
     new Tree(
-      generateRandomNumber(10),
+      i % 2 === 0 ? generateRandomNumber(20) : generateRandomNumber(-20),
       generateRandomNumber(-120),
       generateRandomNumber(-100)
     )
@@ -205,8 +206,8 @@ function spawnTrees() {
   }
 }
 
+spawnTrees()
 function update() {
-  spawnTrees()
   // console.log(hero.mesh.position)
   // console.log(ground._physijs.rotation)
   camera.update()
