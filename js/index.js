@@ -155,11 +155,21 @@ let isGrounded = true
 let isFinished = false
 let groundWidth = 50
 let finish
+let isStarted = false
 
-init()
+
+document.addEventListener('click', e => {
+	if(!isStarted){
+		isStarted = true
+		init()
+	}
+})
+
 function init() {
 	// set up the scene
 	createScene()
+
+	spawnTrees()
 
 	//call game loop
 	update()
@@ -190,6 +200,22 @@ function createScene() {
 
 	hero.addTo(scene)
 	hero.mesh.setCcdMotionThreshold(1)
+
+	hero.mesh.addEventListener( 'collision', function( other_object, linear_velocity, angular_velocity ) {
+	    if(other_object.name == "ground"){
+	      isGrounded = true
+	    }
+
+	    if(other_object.name == "finish"){
+	      console.log("finished!")
+	      isFinished = true
+				document.querySelector('.finish-screen').classList.remove('hidden')
+
+				setTimeout(()=>{
+					location.reload()
+				}, 4000)
+	    }
+	});
 
 	const texture = new THREE.TextureLoader().load('../assets/slope.jpg')
 	texture.wrapS = THREE.RepeatWrapping
@@ -272,8 +298,6 @@ function spawnTrees() {
 	}
 }
 
-spawnTrees()
-
 console.log(trees)
 
 function update() {
@@ -294,6 +318,7 @@ function render() {
 
   ground.receiveShadow = true
 	ground.castShadow = true
+	ground.name = "ground"
 
 
 	scene.simulate()
@@ -307,23 +332,6 @@ function onWindowResize() {
 	camera.aspect = sceneWidth / sceneHeight
 	camera.updateProjectionMatrix()
 }
-
-ground.name = "ground"
-
-hero.mesh.addEventListener( 'collision', function( other_object, linear_velocity, angular_velocity ) {
-    if(other_object.name == "ground"){
-      isGrounded = true
-    }
-
-    if(other_object.name == "finish"){
-      console.log("finished!")
-      isFinished = true
-
-			setTimeout(()=>{
-				location.reload()
-			}, 4000)
-    }
-});
 
 
 function handleKeyDown(keyEvent) {
