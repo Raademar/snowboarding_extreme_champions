@@ -33,32 +33,60 @@ class Player extends THREE.Object3D {
 	updatePosition() {}
 }
 
+class Ending extends THREE.Object3D {
+	constructor(x, y, z) {
+		super()
+		this.geo = new THREE.Geometry()
+
+		this.trunk = new THREE.CylinderGeometry(100, 100, 2)
+		this.trunk.faces.forEach(f => f.color.set(0x00ff00))
+		this.trunk.translate(0, 0, 0)
+		this.geo.merge(this.trunk)
+
+		this.group = new Physijs.CylinderMesh(
+			this.geo,
+			new THREE.MeshLambertMaterial({
+				vertexColors: THREE.VertexColors
+			}),
+			0
+		)
+		this.group.position.x = x
+		this.group.position.y = y
+		this.group.position.z = z
+		// this.group.rotation.x = -19.4w
+		this.group.name = 'finish'
+
+		return this.group
+	}
+}
+
 class Tree extends THREE.Object3D {
 	constructor(x, y, z) {
 		super()
 		this.geo = new THREE.Geometry()
 
 		this.level1 = new THREE.ConeGeometry(1.5, 2, 4)
-		this.level1.faces.forEach(f => f.color.set(0x00ff00))
-		this.level1.translate(0, 4, 0)
+		this.level1.faces.forEach(f => f.color.set(0xF5F5FD))
+		this.level1.translate(0, 5, 0)
 		this.geo.merge(this.level1)
 
 		this.level2 = new THREE.ConeGeometry(2, 2, 4)
-		this.level2.faces.forEach(f => f.color.set(0x00ff00))
-		this.level2.translate(0, 3, 0)
+		this.level2.faces.forEach(f => f.color.set(0xA9ADFF))
+		this.level2.translate(0, 4, 0)
 		this.geo.merge(this.level2)
 
 		this.level3 = new THREE.ConeGeometry(3, 2, 4)
-		this.level3.faces.forEach(f => f.color.set(0x00ff00))
-		this.level3.translate(0, 2, 0)
+
+		this.level3.faces.forEach(f => f.color.set(0x7079FC))
+		this.level3.translate(0, 3, 0)
 		this.geo.merge(this.level3)
 
-		this.trunk = new THREE.CylinderGeometry(0.5, 0.5, 2)
-		this.trunk.faces.forEach(f => f.color.set(0xbb6600))
+		this.trunk = new THREE.CylinderGeometry(0.5, 0.5, 4)
+		this.trunk.faces.forEach(f => f.color.set(0x7079FC))
 		this.trunk.translate(0, 0, 0)
 		this.geo.merge(this.trunk)
 
-		this.group = new Physijs.BoxMesh(
+		this.group = new Physijs.CylinderMesh(
 			this.geo,
 			new THREE.MeshLambertMaterial({
 				vertexColors: THREE.VertexColors
@@ -70,8 +98,8 @@ class Tree extends THREE.Object3D {
 		this.group.position.z = z
 		this.group.rotation.x = -19.4
 		this.group.name = 'tree'
-		this.group.receiveShadow = true
-		this.group.castShadow = true
+		// this.group.receiveShadow = true
+		// this.group.castShadow = true
 
 		return this.group
 	}
@@ -82,7 +110,8 @@ class Camera extends THREE.PerspectiveCamera {
 		super(fov, aspect, near, far)
 
 		// this.distanceToPlayer = 15;
-		this.distanceToPlayer = 10
+		this.finished = false
+		this.distanceToPlayer = 20
 		this.position.set(0, 20, 60)
 		this.zoom = 10
 		this.position.y = 40
@@ -90,9 +119,16 @@ class Camera extends THREE.PerspectiveCamera {
 	}
 
 	update() {
-		this.position.z = hero.mesh.position.z + 20
-		this.position.y = hero.mesh.position.y + 20
-		this.position.x = hero.mesh.position.x
+		if(!this.finished){
+			this.position.z = hero.mesh.position.z + this.distanceToPlayer
+			this.position.y = hero.mesh.position.y + this.distanceToPlayer
+			this.position.x = hero.mesh.position.x
+		} else {
+			this.position.x = finish.position.x
+			this.position.y = finish.position.y + 20
+			this.position.z = finish.position.z
+			this.lookAt(hero.mesh)
+		}
 	}
 }
 
@@ -116,8 +152,9 @@ let tree
 let trees = []
 let isTurning = false
 let isGrounded = true
-
+let isFinished = false
 let groundWidth = 50
+let finish
 
 init()
 function init() {
@@ -176,13 +213,22 @@ function createScene() {
 	ground.rotateX(-Math.PI / 2 - 10)
 	scene.add(ground)
 
+  const b = (getCosFromDegrees(32.957795) * -10000)/2
+  console.log(`value b is : ${b}`)
+  finish = new Ending(0, getTanFromDegrees(32.957795) * b, b)
+  finish.rotateX(-3.4)
+
+
+  console.log(finish.position)
+  scene.add(finish)
+
 	sun = new THREE.PointLight(0xffffff, 1, 0)
 	sun.position.set(50, 50, 50)
 	sun.castShadow = true
 	scene.add(sun)
 	//Set up shadow properties for the sun light
 	sun.shadow.mapSize.width = groundWidth
-	sun.shadow.mapSize.height = 1000
+	sun.shadow.mapSize.height = (getCosFromDegrees(32.957795) * -10000)/2
 	sun.shadow.camera.near = 0.5
 	sun.shadow.camera.far = 1000
 
@@ -205,9 +251,17 @@ function getTanFromDegrees(degrees) {
 	return Math.tan((degrees * Math.PI) / 180)
 }
 
-for (let i = 0; i < 200; i++) {
-	let x = i % 2 === 0 ? generateRandomNumber(20) : generateRandomNumber(-20)
-	let z = generateRandomNumber(-1000)
+function getCosFromDegrees(degrees) {
+	return Math.cos((degrees * Math.PI) / 180)
+}
+
+function getSinFromDegrees(degrees) {
+	return Math.sin((degrees * Math.PI) / 180)
+}
+
+for (let i = 0; i < 100; i++) {
+	let x = i % 2 === 0 ? generateRandomNumber(25) : generateRandomNumber(-25)
+	let z = generateRandomNumber((getCosFromDegrees(32.957795) * -10000)/2)
 	let y = getTanFromDegrees(32.957795) * z + 1.5
 	trees.push(new Tree(x, y, z))
 }
@@ -232,18 +286,15 @@ function update() {
 	render()
 }
 function render() {
-	// console.log(hero.mesh.rotation)
 
-	if (hero.mesh.rotation.y > 0.2) {
-		hero.mesh.rotation.y -= 0.01
-	}
+  if(isFinished){
+		hero.mesh.setLinearVelocity({x:0, y:0, z:-2})
+		camera.distanceToPlayer = 100
+  }
 
   ground.receiveShadow = true
 	ground.castShadow = true
 
-	if (hero.mesh.rotation.y < -0.2) {
-		hero.mesh.rotation.y += 0.01
-	}
 
 	scene.simulate()
 	renderer.render(scene, camera) //draw
@@ -262,6 +313,15 @@ ground.name = "ground"
 hero.mesh.addEventListener( 'collision', function( other_object, linear_velocity, angular_velocity ) {
     if(other_object.name == "ground"){
       isGrounded = true
+    }
+
+    if(other_object.name == "finish"){
+      console.log("finished!")
+      isFinished = true
+
+			setTimeout(()=>{
+				location.reload()
+			}, 4000)
     }
 });
 
@@ -299,7 +359,7 @@ function handleKeyDown(keyEvent) {
 
       if(isGrounded){
         isGrounded = false
-        hero.mesh.setLinearVelocity({ x: 0, y: 0, z: -10 })
+        hero.mesh.setLinearVelocity({ x: 0, y: 0, z: -100 })
       }
 
 			break
