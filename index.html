@@ -40,9 +40,31 @@
 				opacity: 0;
 			}
 
+			p {
+				font-family: sans-serif;
+				font-size:2rem;
+			}
+
+			.timer-container {
+				width:100%;
+				position:absolute;
+				display: flex;
+				justify-content: center;
+			}
+
+			.finished-timer {
+				font-size:4rem;
+				color:#222;
+				margin-top:181px;
+				margin-right:65%;
+			}
+
 		</style>
 	</head>
 	<body>
+		<div class="timer-container">
+			<p class="seconds-counter">0s</p>
+		</div>
 		<div class="finish-screen hidden">
 			<img src="assets/finish.png" />
 		</div>
