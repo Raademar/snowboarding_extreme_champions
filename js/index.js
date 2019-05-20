@@ -156,12 +156,14 @@ let isFinished = false
 let groundWidth = 50
 let finish
 let isStarted = false
-
+let cancel
 
 document.addEventListener('click', e => {
 	if(!isStarted){
 		isStarted = true
 		init()
+
+		cancel = setInterval(incrementSeconds, 1000);
 	}
 })
 
@@ -211,9 +213,12 @@ function createScene() {
 	      isFinished = true
 				document.querySelector('.finish-screen').classList.remove('hidden')
 
-				setTimeout(()=>{
-					location.reload()
-				}, 4000)
+				document.querySelector('.seconds-counter').classList.add('finished-timer')
+				clearInterval(cancel)
+
+				// setTimeout(()=>{
+				// 	location.reload()
+				// }, 4000)
 	    }
 	});
 
@@ -298,7 +303,13 @@ function spawnTrees() {
 	}
 }
 
-console.log(trees)
+var seconds = 0;
+var el = document.querySelector('.seconds-counter');
+
+function incrementSeconds() {
+    seconds += 1;
+    el.innerText = seconds+"s";
+}
 
 function update() {
 	// console.log(hero.mesh.position)
