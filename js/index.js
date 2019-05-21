@@ -44,6 +44,8 @@ class Player extends THREE.Object3D {
 		this.mesh.position.x = x
 		this.mesh.rotation.x = rotationX
 		this.mesh.__dirtyPosition = true
+		this.mesh.__dirtyRotation = true
+
 		this.mesh.addEventListener(
 			'collision',
 			(other_object, linear_velocity, angular_velocity) => {
@@ -354,7 +356,7 @@ function getSinFromDegrees(degrees) {
 	return Math.sin((degrees * Math.PI) / 180)
 }
 
-for (let i = 0; i < 100; i++) {
+for (let i = 0; i < 200; i++) {
 	let x = i % 2 === 0 ? generateRandomNumber(25) : generateRandomNumber(-25)
 	let z = generateRandomNumber((getCosFromDegrees(32.957795) * -10000) / 2)
 	let y = getTanFromDegrees(32.957795) * z + 1.5
@@ -363,7 +365,9 @@ for (let i = 0; i < 100; i++) {
 
 function spawnObstacles() {
 	for (let i = 0; i < obstacles.length; i++) {
-		scene.add(obstacles[i])
+		setTimeout(() => {
+			scene.add(obstacles[i])
+		}, 10)
 	}
 }
 
@@ -371,6 +375,7 @@ var seconds = 0;
 var milliseconds = 0;
 var totalMilliseconds = 0;
 var counter = document.querySelector('.seconds-counter');
+var highscore = document.querySelector('.highscore-counter');
 
 function incrementSeconds() {
 
@@ -383,6 +388,8 @@ function incrementSeconds() {
 		totalMilliseconds += 1;
 
     counter.innerText = seconds+"."+milliseconds;
+		highscore.innerText = `${localStorage.getItem('highScore')[0]}${localStorage.getItem('highScore')[1]}.${localStorage.getItem('highScore')[2]}${localStorage.getItem('highScore')[3]}`
+
 }
 
 function update() {
