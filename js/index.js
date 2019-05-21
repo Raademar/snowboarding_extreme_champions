@@ -98,7 +98,14 @@ class Ending extends THREE.Object3D {
 		// this.group.rotation.x = -19.4w
 		this.group.name = 'finish'
 
-		return this.group
+		//return this.group
+	}
+
+	addToObject(objectToMergeIn) {
+		this.group.add(objectToMergeIn)
+	}
+	addTo(scene) {
+		scene.add(this.group)
 	}
 }
 
@@ -209,7 +216,7 @@ document.addEventListener('click', e => {
 		isStarted = true
 		init()
 
-		cancel = setInterval(incrementSeconds, 10);
+		cancel = setInterval(incrementSeconds, 10)
 	}
 })
 
@@ -229,19 +236,29 @@ function createScene() {
 	scene.fog = new THREE.FogExp2(0xf0fff0, 0.005)
 	camera = new Camera(35, window.innerWidth / window.innerHeight, 0.1, 1000)
 
-	renderer = new THREE.WebGLRenderer({ alpha: true, antialias:true })
+	renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true })
 	renderer.setClearColor(0x000000, 0)
 	renderer.shadowMap.enabled = true
 	renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
 	renderer.setSize(window.innerWidth, window.innerHeight)
 	document.body.appendChild(renderer.domElement)
+	const loader = new GLTFLoader()
+
+	const b = (getCosFromDegrees(32.957795) * -groundHeight) / 2
+	finish = new Ending(0, getTanFromDegrees(32.957795) * b, b)
+	// finish.rotateX(-3.4)
+
+	finish.addTo(scene)
+	loader.load('../assets/bleacher.gltf', function(gltf) {
+		const bleacher = gltf.scene
+		finish.addToObject(bleacher)
+	})
 
 	hero = new Player(1, 1, -0.4)
 	hero.addTo(scene)
 	hero.mesh.setCcdMotionThreshold(1)
 
-	const loader = new GLTFLoader()
 	loader.load('../assets/boy_character/scene.gltf', function(gltf) {
 		const character = gltf.scene
 		character.rotation.y = 1.5
@@ -273,27 +290,23 @@ function createScene() {
 			isFinished = true
 			document.querySelector('.finish-screen').classList.remove('hidden')
 
-				var highScore = localStorage.getItem('highScore');
+			var highScore = localStorage.getItem('highScore')
 
-				if(highScore) {
-					if(parseInt(highScore) > totalMilliseconds){
-
-						console.log("highScore!!!")
-						document.querySelector('.seconds-counter').classList.add('highscore')
-						localStorage.setItem('highScore', totalMilliseconds)
-
-					}
-				} else {
-
-					console.log("highScore!!!")
-
+			if (highScore) {
+				if (parseInt(highScore) > totalMilliseconds) {
+					console.log('highScore!!!')
 					document.querySelector('.seconds-counter').classList.add('highscore')
 					localStorage.setItem('highScore', totalMilliseconds)
-
 				}
+			} else {
+				console.log('highScore!!!')
 
-				document.querySelector('.seconds-counter').classList.add('finished-timer')
-				clearInterval(cancel)
+				document.querySelector('.seconds-counter').classList.add('highscore')
+				localStorage.setItem('highScore', totalMilliseconds)
+			}
+
+			document.querySelector('.seconds-counter').classList.add('finished-timer')
+			clearInterval(cancel)
 
 			// setTimeout(()=>{
 			// 	location.reload()
@@ -325,12 +338,6 @@ function createScene() {
 
 	ground.rotateX(-Math.PI / 2 - 10)
 	scene.add(ground)
-
-	const b = (getCosFromDegrees(32.957795) * -groundHeight) / 2
-	finish = new Ending(0, getTanFromDegrees(32.957795) * b, b)
-	finish.rotateX(-3.4)
-
-	scene.add(finish)
 
 	sun = new THREE.PointLight(0xffffff, 1, 0)
 	sun.position.set(50, 50, 50)
@@ -386,25 +393,27 @@ function spawnObstacles() {
 	}
 }
 
-var seconds = 0;
-var milliseconds = 0;
-var totalMilliseconds = 0;
-var counter = document.querySelector('.seconds-counter');
-var highscore = document.querySelector('.highscore-counter');
+var seconds = 0
+var milliseconds = 0
+var totalMilliseconds = 0
+var counter = document.querySelector('.seconds-counter')
+var highscore = document.querySelector('.highscore-counter')
 
 function incrementSeconds() {
+	if (milliseconds >= 100) {
+		seconds += 1
+		milliseconds = 0
+	}
 
-		if(milliseconds >= 100){
-			seconds += 1
-			milliseconds = 0
-		}
+	milliseconds += 1
+	totalMilliseconds += 1
 
-		milliseconds += 1;
-		totalMilliseconds += 1;
-
-    counter.innerText = seconds+"."+milliseconds;
-		highscore.innerText = `${localStorage.getItem('highScore')[0]}${localStorage.getItem('highScore')[1]}.${localStorage.getItem('highScore')[2]}${localStorage.getItem('highScore')[3]}`
-
+	counter.innerText = seconds + '.' + milliseconds
+	highscore.innerText = `${localStorage.getItem('highScore')[0]}${
+		localStorage.getItem('highScore')[1]
+	}.${localStorage.getItem('highScore')[2]}${
+		localStorage.getItem('highScore')[3]
+	}`
 }
 
 function update() {
@@ -492,7 +501,7 @@ function handleKeyDown(keyEvent) {
 
 			break
 		case 32:
-			isTurning = true
+			isTurning = false
 
 			if (isGrounded) {
 				isGrounded = false
