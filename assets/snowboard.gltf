@@ -1,0 +1,193 @@
+{
+    "accessors" : [
+        {
+            "bufferView" : 0,
+            "componentType" : 5123,
+            "count" : 4368,
+            "max" : [
+                1033
+            ],
+            "min" : [
+                0
+            ],
+            "type" : "SCALAR"
+        },
+        {
+            "bufferView" : 1,
+            "componentType" : 5126,
+            "count" : 1034,
+            "max" : [
+                0.15593259036540985,
+                0.053486041724681854,
+                0.7997341752052307
+            ],
+            "min" : [
+                -0.15593263506889343,
+                2.224324271082878e-05,
+                -0.7997341752052307
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 2,
+            "componentType" : 5126,
+            "count" : 1034,
+            "max" : [
+                0.7146214246749878,
+                1.0,
+                0.9172643423080444
+            ],
+            "min" : [
+                -0.7146214246749878,
+                -1.0,
+                -0.9172643423080444
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 3,
+            "componentType" : 5126,
+            "count" : 1034,
+            "max" : [
+                1.0,
+                0.7275257110595703,
+                0.6917036771774292,
+                1.0
+            ],
+            "min" : [
+                -1.0,
+                -0.7274081707000732,
+                -0.69623863697052,
+                1.0
+            ],
+            "type" : "VEC4"
+        },
+        {
+            "bufferView" : 4,
+            "componentType" : 5126,
+            "count" : 1034,
+            "max" : [
+                0.8051323890686035,
+                0.999684922862798
+            ],
+            "min" : [
+                0.1822371780872345,
+                0.0004450678825378418
+            ],
+            "type" : "VEC2"
+        }
+    ],
+    "asset" : {
+        "generator" : "Khronos Blender glTF 2.0 exporter",
+        "version" : "2.0"
+    },
+    "bufferViews" : [
+        {
+            "buffer" : 0,
+            "byteLength" : 8736,
+            "byteOffset" : 0,
+            "target" : 34963
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 12408,
+            "byteOffset" : 8736,
+            "target" : 34962
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 12408,
+            "byteOffset" : 21144,
+            "target" : 34962
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 16544,
+            "byteOffset" : 33552,
+            "target" : 34962
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 8272,
+            "byteOffset" : 50096,
+            "target" : 34962
+        }
+    ],
+    "buffers" : [
+        {
+            "byteLength" : 58368,
+            "uri" : "snowboard.bin"
+        }
+    ],
+    "meshes" : [
+        {
+            "name" : "Board_hi",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "NORMAL" : 2,
+                        "POSITION" : 1,
+                        "TANGENT" : 3,
+                        "TEXCOORD_0" : 4
+                    },
+                    "indices" : 0
+                }
+            ]
+        }
+    ],
+    "nodes" : [
+        {
+            "mesh" : 0,
+            "name" : "Board_hi"
+        },
+        {
+            "name" : "Camera",
+            "rotation" : [
+                0.450377881526947,
+                0.1739642173051834,
+                -0.08993973582983017,
+                0.8710952997207642
+            ],
+            "scale" : [
+                1.0,
+                1.0,
+                1.0000001192092896
+            ],
+            "translation" : [
+                0.10254845023155212,
+                0.6609888076782227,
+                1.2156436443328857
+            ]
+        },
+        {
+            "name" : "Lamp",
+            "rotation" : [
+                0.45926666259765625,
+                -0.16172589361667633,
+                -0.38670411705970764,
+                0.7831851840019226
+            ],
+            "scale" : [
+                0.9999999403953552,
+                1.0,
+                1.0
+            ],
+            "translation" : [
+                0.0,
+                5.0,
+                -0.0
+            ]
+        }
+    ],
+    "scene" : 0,
+    "scenes" : [
+        {
+            "name" : "Scene",
+            "nodes" : [
+                2,
+                0,
+                1
+            ]
+        }
+    ]
+}

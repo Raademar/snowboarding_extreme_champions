@@ -20,26 +20,20 @@ let isGrounded = true
 let isFinished = false
 let groundWidth = 50
 let finish
-let character
-
-// const loader = new GLTFLoader()
-// loader.load('../assets/boy_character/scene.gltf', function(gltf) {
-// 	const emoji = gltf.scenes[0].children[0]
-// 	console.log(emoji)
-// 	emoji.scale.x = 0.01
-// 	emoji.scale.y = 0.01
-// 	emoji.scale.z = 0.01
-// 	// emoji.position.y = 1
-// })
 
 class Player extends THREE.Object3D {
 	constructor(y, x, rotationX) {
 		super()
-		const loader = new GLTFLoader()
+		this.group = new THREE.Geometry()
+		this.character = {}
 
 		this.geometry = new THREE.BoxGeometry(1, 0.2, 3)
-		this.material = new THREE.MeshBasicMaterial({ color: 0x883333 })
-		this.mesh = new Physijs.BoxMesh(this.geometry, this.heroMaterial)
+		this.material = new THREE.MeshBasicMaterial({
+			color: 0xffffff,
+			transparent: true,
+			opacity: 0
+		})
+		this.mesh = new Physijs.BoxMesh(this.geometry, this.material)
 		this.mesh.componentOf = 'hero'
 
 		this.mesh.castShadow = true
@@ -48,17 +42,6 @@ class Player extends THREE.Object3D {
 		this.mesh.position.x = x
 		this.mesh.rotation.x = rotationX
 		this.mesh.__dirtyPosition = true
-
-		loader.load('../assets/boy_character/character.glb', function(gltf) {
-			character = gltf.scene.children[0]
-			character.componentOf = 'hero'
-			character.scale.x = 0.01
-			character.scale.y = 0.01
-			character.scale.z = 0.01
-			character.position.y = 1
-		})
-		this.mesh.add(character)
-
 		this.mesh.addEventListener(
 			'collision',
 			(other_object, linear_velocity, angular_velocity) => {
@@ -67,6 +50,9 @@ class Player extends THREE.Object3D {
 				}
 			}
 		)
+	}
+	addToObject(objectToMergeIn) {
+		this.mesh.add(objectToMergeIn)
 	}
 	addTo(scene) {
 		scene.add(this.mesh)
@@ -235,9 +221,27 @@ function createScene() {
 	renderer.setSize(window.innerWidth, window.innerHeight)
 	document.body.appendChild(renderer.domElement)
 
-	hero = new Player(1, 2, 2)
+	hero = new Player(1, 1, -0.4)
 	hero.addTo(scene)
 	hero.mesh.setCcdMotionThreshold(1)
+
+	const loader = new GLTFLoader()
+	loader.load('../assets/boy_character/scene.gltf', function(gltf) {
+		const character = gltf.scene
+		character.rotation.y = 1.5
+		character.scale.x = 0.01
+		character.scale.y = 0.01
+		character.scale.z = 0.01
+		hero.addToObject(character)
+	})
+	loader.load('../assets/snowboard.gltf', function(gltf) {
+		const snowboard = gltf.scene
+		snowboard.position.y = 0
+		snowboard.scale.x = 3
+		snowboard.scale.y = 2
+		snowboard.scale.z = 3
+		hero.addToObject(snowboard)
+	})
 
 	const texture = new THREE.TextureLoader().load('../assets/slope.jpg')
 	texture.wrapS = THREE.RepeatWrapping
@@ -262,11 +266,9 @@ function createScene() {
 	scene.add(ground)
 
 	const b = (getCosFromDegrees(32.957795) * -10000) / 2
-	console.log(`value b is : ${b}`)
 	finish = new Ending(0, getTanFromDegrees(32.957795) * b, b)
 	finish.rotateX(-3.4)
 
-	console.log(finish.position)
 	scene.add(finish)
 
 	sun = new THREE.PointLight(0xffffff, 1, 0)
@@ -336,12 +338,28 @@ function render() {
 		camera.distanceToPlayer = 100
 	}
 
+	if (hasPlayerFallen()) {
+		location.reload()
+	}
+
 	ground.receiveShadow = true
 	ground.castShadow = true
 
 	scene.simulate()
 	renderer.render(scene, camera) //draw
 }
+
+function hasPlayerFallen() {
+	if (
+		hero.mesh.position.y <
+		getTanFromDegrees(32.957795) * hero.mesh.position.z - 20
+	) {
+		return true
+	} else {
+		return false
+	}
+}
+
 function onWindowResize() {
 	//resize & align
 	sceneHeight = window.innerHeight
@@ -367,7 +385,7 @@ hero.mesh.addEventListener('collision', function(
 		isFinished = true
 
 		setTimeout(() => {
-			location.reload()
+			// location.reload()
 		}, 4000)
 	}
 })
