@@ -59,11 +59,21 @@
 				margin-right:65%;
 			}
 
+			.highscore::after {
+				content:'HIGHSCORE';
+				display:block;
+				position:absolute;
+				background:red;
+				color:white;
+				padding:5px;
+				font-size:2rem;
+			}
+
 		</style>
 	</head>
 	<body>
 		<div class="timer-container">
-			<p class="seconds-counter">0s</p>
+			<p class="seconds-counter"></p>
 		</div>
 		<div class="finish-screen hidden">
 			<img src="assets/finish.png" />
