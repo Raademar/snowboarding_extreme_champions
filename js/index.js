@@ -3,12 +3,38 @@ import OrbitControls from './controls/OrbitControls.js'
 import GLTFLoader from './GLTFLoader.js'
 import * as THREE from 'https://unpkg.com/three@0.104.0/build/three.module.js'
 
+let sceneWidth
+let sceneHeight
+let camera
+let scene
+let renderer
+let dom
+let hero
+let sun
+let ground
+let orbitControl
+let tree
+let trees = []
+let isTurning = false
+let isGrounded = true
+let isFinished = false
+let groundWidth = 50
+let finish
+
 class Player extends THREE.Object3D {
 	constructor(y, x, rotationX) {
 		super()
+		this.group = new THREE.Geometry()
+		this.character = {}
+
 		this.geometry = new THREE.BoxGeometry(1, 0.2, 3)
-		this.material = new THREE.MeshBasicMaterial({ color: 0x883333 })
-		this.mesh = new Physijs.BoxMesh(this.geometry, this.heroMaterial)
+		this.material = new THREE.MeshBasicMaterial({
+			color: 0xffffff,
+			transparent: true,
+			opacity: 0
+		})
+		this.mesh = new Physijs.BoxMesh(this.geometry, this.material)
+		this.mesh.componentOf = 'hero'
 
 		this.mesh.castShadow = true
 		this.mesh.receiveShadow = false
@@ -16,7 +42,6 @@ class Player extends THREE.Object3D {
 		this.mesh.position.x = x
 		this.mesh.rotation.x = rotationX
 		this.mesh.__dirtyPosition = true
-
 		this.mesh.addEventListener(
 			'collision',
 			(other_object, linear_velocity, angular_velocity) => {
@@ -25,6 +50,9 @@ class Player extends THREE.Object3D {
 				}
 			}
 		)
+	}
+	addToObject(objectToMergeIn) {
+		this.mesh.add(objectToMergeIn)
 	}
 	addTo(scene) {
 		scene.add(this.mesh)
@@ -66,23 +94,23 @@ class Tree extends THREE.Object3D {
 		this.geo = new THREE.Geometry()
 
 		this.level1 = new THREE.ConeGeometry(1.5, 2, 4)
-		this.level1.faces.forEach(f => f.color.set(0xF5F5FD))
+		this.level1.faces.forEach(f => f.color.set(0xf5f5fd))
 		this.level1.translate(0, 5, 0)
 		this.geo.merge(this.level1)
 
 		this.level2 = new THREE.ConeGeometry(2, 2, 4)
-		this.level2.faces.forEach(f => f.color.set(0xA9ADFF))
+		this.level2.faces.forEach(f => f.color.set(0xa9adff))
 		this.level2.translate(0, 4, 0)
 		this.geo.merge(this.level2)
 
 		this.level3 = new THREE.ConeGeometry(3, 2, 4)
 
-		this.level3.faces.forEach(f => f.color.set(0x7079FC))
+		this.level3.faces.forEach(f => f.color.set(0x7079fc))
 		this.level3.translate(0, 3, 0)
 		this.geo.merge(this.level3)
 
 		this.trunk = new THREE.CylinderGeometry(0.5, 0.5, 4)
-		this.trunk.faces.forEach(f => f.color.set(0x7079FC))
+		this.trunk.faces.forEach(f => f.color.set(0x7079fc))
 		this.trunk.translate(0, 0, 0)
 		this.geo.merge(this.trunk)
 
@@ -119,7 +147,7 @@ class Camera extends THREE.PerspectiveCamera {
 	}
 
 	update() {
-		if(!this.finished){
+		if (!this.finished) {
 			this.position.z = hero.mesh.position.z + this.distanceToPlayer
 			this.position.y = hero.mesh.position.y + this.distanceToPlayer
 			this.position.x = hero.mesh.position.x
@@ -138,24 +166,6 @@ Physijs.scripts.ammo =
 var blob = new Blob([document.querySelector('#physijs_worker').textContent])
 Physijs.scripts.worker = window.URL.createObjectURL(blob)
 
-let sceneWidth
-let sceneHeight
-let camera
-let scene
-let renderer
-let dom
-let hero
-let sun
-let ground
-let orbitControl
-let tree
-let trees = []
-let isTurning = false
-let isGrounded = true
-let isFinished = false
-let groundWidth = 50
-let finish
-
 init()
 function init() {
 	// set up the scene
@@ -164,13 +174,6 @@ function init() {
 	//call game loop
 	update()
 }
-
-const loader = new GLTFLoader()
-loader.load('../assets/Thonker.glb', function(gltf) {
-	const emoji = gltf.scenes[0].children[0]
-	emoji.position.y = 3
-	scene.add(gltf.scene)
-})
 
 function createScene() {
 	scene = new Physijs.Scene()
@@ -186,10 +189,27 @@ function createScene() {
 	renderer.setSize(window.innerWidth, window.innerHeight)
 	document.body.appendChild(renderer.domElement)
 
-	hero = new Player(1, 2, 2)
-
+	hero = new Player(1, 1, -0.4)
 	hero.addTo(scene)
 	hero.mesh.setCcdMotionThreshold(1)
+
+	const loader = new GLTFLoader()
+	loader.load('../assets/boy_character/scene.gltf', function(gltf) {
+		const character = gltf.scene
+		character.rotation.y = 1.5
+		character.scale.x = 0.01
+		character.scale.y = 0.01
+		character.scale.z = 0.01
+		hero.addToObject(character)
+	})
+	loader.load('../assets/snowboard.gltf', function(gltf) {
+		const snowboard = gltf.scene
+		snowboard.position.y = 0
+		snowboard.scale.x = 3
+		snowboard.scale.y = 2
+		snowboard.scale.z = 3
+		hero.addToObject(snowboard)
+	})
 
 	const texture = new THREE.TextureLoader().load('../assets/slope.jpg')
 	texture.wrapS = THREE.RepeatWrapping
@@ -213,14 +233,11 @@ function createScene() {
 	ground.rotateX(-Math.PI / 2 - 10)
 	scene.add(ground)
 
-  const b = (getCosFromDegrees(32.957795) * -10000)/2
-  console.log(`value b is : ${b}`)
-  finish = new Ending(0, getTanFromDegrees(32.957795) * b, b)
-  finish.rotateX(-3.4)
+	const b = (getCosFromDegrees(32.957795) * -10000) / 2
+	finish = new Ending(0, getTanFromDegrees(32.957795) * b, b)
+	finish.rotateX(-3.4)
 
-
-  console.log(finish.position)
-  scene.add(finish)
+	scene.add(finish)
 
 	sun = new THREE.PointLight(0xffffff, 1, 0)
 	sun.position.set(50, 50, 50)
@@ -228,7 +245,7 @@ function createScene() {
 	scene.add(sun)
 	//Set up shadow properties for the sun light
 	sun.shadow.mapSize.width = groundWidth
-	sun.shadow.mapSize.height = (getCosFromDegrees(32.957795) * -10000)/2
+	sun.shadow.mapSize.height = (getCosFromDegrees(32.957795) * -10000) / 2
 	sun.shadow.camera.near = 0.5
 	sun.shadow.camera.far = 1000
 
@@ -261,7 +278,7 @@ function getSinFromDegrees(degrees) {
 
 for (let i = 0; i < 100; i++) {
 	let x = i % 2 === 0 ? generateRandomNumber(25) : generateRandomNumber(-25)
-	let z = generateRandomNumber((getCosFromDegrees(32.957795) * -10000)/2)
+	let z = generateRandomNumber((getCosFromDegrees(32.957795) * -10000) / 2)
 	let y = getTanFromDegrees(32.957795) * z + 1.5
 	trees.push(new Tree(x, y, z))
 }
@@ -274,8 +291,6 @@ function spawnTrees() {
 
 spawnTrees()
 
-console.log(trees)
-
 function update() {
 	// console.log(hero.mesh.position)
 	// console.log(ground._physijs.rotation)
@@ -286,19 +301,33 @@ function update() {
 	render()
 }
 function render() {
-
-  if(isFinished){
-		hero.mesh.setLinearVelocity({x:0, y:0, z:-2})
+	if (isFinished) {
+		hero.mesh.setLinearVelocity({ x: 0, y: 0, z: -2 })
 		camera.distanceToPlayer = 100
-  }
+	}
 
-  ground.receiveShadow = true
+	if (hasPlayerFallen()) {
+		location.reload()
+	}
+
+	ground.receiveShadow = true
 	ground.castShadow = true
-
 
 	scene.simulate()
 	renderer.render(scene, camera) //draw
 }
+
+function hasPlayerFallen() {
+	if (
+		hero.mesh.position.y <
+		getTanFromDegrees(32.957795) * hero.mesh.position.z - 20
+	) {
+		return true
+	} else {
+		return false
+	}
+}
+
 function onWindowResize() {
 	//resize & align
 	sceneHeight = window.innerHeight
@@ -308,23 +337,26 @@ function onWindowResize() {
 	camera.updateProjectionMatrix()
 }
 
-ground.name = "ground"
+ground.name = 'ground'
 
-hero.mesh.addEventListener( 'collision', function( other_object, linear_velocity, angular_velocity ) {
-    if(other_object.name == "ground"){
-      isGrounded = true
-    }
+hero.mesh.addEventListener('collision', function(
+	other_object,
+	linear_velocity,
+	angular_velocity
+) {
+	if (other_object.name == 'ground') {
+		isGrounded = true
+	}
 
-    if(other_object.name == "finish"){
-      console.log("finished!")
-      isFinished = true
+	if (other_object.name == 'finish') {
+		console.log('finished!')
+		isFinished = true
 
-			setTimeout(()=>{
-				location.reload()
-			}, 4000)
-    }
-});
-
+		setTimeout(() => {
+			// location.reload()
+		}, 4000)
+	}
+})
 
 function handleKeyDown(keyEvent) {
 	switch (keyEvent.keyCode) {
@@ -357,10 +389,10 @@ function handleKeyDown(keyEvent) {
 		case 32:
 			isTurning = true
 
-      if(isGrounded){
-        isGrounded = false
-        hero.mesh.setLinearVelocity({ x: 0, y: 0, z: -100 })
-      }
+			if (isGrounded) {
+				isGrounded = false
+				hero.mesh.setLinearVelocity({ x: 0, y: 0, z: -100 })
+			}
 
 			break
 	}
