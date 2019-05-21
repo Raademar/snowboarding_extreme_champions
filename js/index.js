@@ -163,7 +163,7 @@ document.addEventListener('click', e => {
 		isStarted = true
 		init()
 
-		cancel = setInterval(incrementSeconds, 1000);
+		cancel = setInterval(incrementSeconds, 10);
 	}
 })
 
@@ -190,7 +190,7 @@ function createScene() {
 	scene.fog = new THREE.FogExp2(0xf0fff0, 0.005)
 	camera = new Camera(35, window.innerWidth / window.innerHeight, 0.1, 1000)
 
-	renderer = new THREE.WebGLRenderer({ alpha: true })
+	renderer = new THREE.WebGLRenderer({ alpha: true, antialias:true })
 	renderer.setClearColor(0x000000, 0)
 	renderer.shadowMap.enabled = true
 	renderer.shadowMap.type = THREE.PCFSoftShadowMap
@@ -212,6 +212,25 @@ function createScene() {
 	      console.log("finished!")
 	      isFinished = true
 				document.querySelector('.finish-screen').classList.remove('hidden')
+
+				var highScore = localStorage.getItem('highScore');
+
+				if(highScore) {
+					if(parseInt(highScore) > totalMilliseconds){
+
+						console.log("highScore!!!")
+						document.querySelector('.seconds-counter').classList.add('highscore')
+						localStorage.setItem('highScore', totalMilliseconds)
+
+					}
+				} else {
+
+					console.log("highScore!!!")
+
+					document.querySelector('.seconds-counter').classList.add('highscore')
+					localStorage.setItem('highScore', totalMilliseconds)
+
+				}
 
 				document.querySelector('.seconds-counter').classList.add('finished-timer')
 				clearInterval(cancel)
@@ -304,11 +323,21 @@ function spawnTrees() {
 }
 
 var seconds = 0;
-var el = document.querySelector('.seconds-counter');
+var milliseconds = 0;
+var totalMilliseconds = 0;
+var counter = document.querySelector('.seconds-counter');
 
 function incrementSeconds() {
-    seconds += 1;
-    el.innerText = seconds+"s";
+
+		if(milliseconds >= 100){
+			seconds += 1
+			milliseconds = 0
+		}
+
+		milliseconds += 1;
+		totalMilliseconds += 1;
+
+    counter.innerText = seconds+"."+milliseconds;
 }
 
 function update() {
