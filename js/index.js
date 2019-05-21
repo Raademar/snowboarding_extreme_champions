@@ -14,7 +14,7 @@ let sun
 let ground
 let orbitControl
 let tree
-let trees = []
+let obstacles = []
 let isTurning = false
 let isGrounded = true
 let isFinished = false
@@ -88,43 +88,75 @@ class Ending extends THREE.Object3D {
 	}
 }
 
-class Tree extends THREE.Object3D {
+class Obstacle extends THREE.Object3D {
 	constructor(x, y, z) {
 		super()
 		this.geo = new THREE.Geometry()
 
-		this.level1 = new THREE.ConeGeometry(1.5, 2, 4)
-		this.level1.faces.forEach(f => f.color.set(0xf5f5fd))
-		this.level1.translate(0, 5, 0)
-		this.geo.merge(this.level1)
+		let random = generateRandomNumber(100)
 
-		this.level2 = new THREE.ConeGeometry(2, 2, 4)
-		this.level2.faces.forEach(f => f.color.set(0xa9adff))
-		this.level2.translate(0, 4, 0)
-		this.geo.merge(this.level2)
+		if(random > 10){
 
-		this.level3 = new THREE.ConeGeometry(3, 2, 4)
+			this.level1 = new THREE.ConeGeometry(1.5, 2, 4)
+			this.level1.faces.forEach(f => f.color.set(0xF5F5FD))
+			this.level1.translate(0, 5, 0)
+			this.geo.merge(this.level1)
 
-		this.level3.faces.forEach(f => f.color.set(0x7079fc))
-		this.level3.translate(0, 3, 0)
-		this.geo.merge(this.level3)
+			this.level2 = new THREE.ConeGeometry(2, 2, 4)
+			this.level2.faces.forEach(f => f.color.set(0xA9ADFF))
+			this.level2.translate(0, 4, 0)
+			this.geo.merge(this.level2)
 
-		this.trunk = new THREE.CylinderGeometry(0.5, 0.5, 4)
-		this.trunk.faces.forEach(f => f.color.set(0x7079fc))
-		this.trunk.translate(0, 0, 0)
-		this.geo.merge(this.trunk)
+			this.level3 = new THREE.ConeGeometry(3, 2, 4)
 
-		this.group = new Physijs.CylinderMesh(
-			this.geo,
-			new THREE.MeshLambertMaterial({
-				vertexColors: THREE.VertexColors
-			}),
-			0
-		)
+			this.level3.faces.forEach(f => f.color.set(0x7079FC))
+			this.level3.translate(0, 3, 0)
+			this.geo.merge(this.level3)
+
+			this.trunk = new THREE.CylinderGeometry(0.5, 0.5, 4)
+			this.trunk.faces.forEach(f => f.color.set(0x7079FC))
+			this.trunk.translate(0, 0, 0)
+			this.geo.merge(this.trunk)
+
+			this.group = new Physijs.CylinderMesh(
+				this.geo,
+				new THREE.MeshLambertMaterial({
+					vertexColors: THREE.VertexColors
+				}),
+				0
+			)
+
+			this.group.rotation.x = -19.4
+			this.group.position.y = y
+
+
+		} else {
+
+			this.level1 = new THREE.BoxGeometry(6, 1, 15)
+			this.level1.faces.forEach(f => f.color.set(0xA9ADFF))
+			this.level1.translate(0, 1, 0)
+			this.geo.merge(this.level1)
+
+
+			this.group = new Physijs.BoxMesh(
+				this.geo,
+				new THREE.MeshLambertMaterial({
+					vertexColors: THREE.VertexColors
+				}),
+				0
+			)
+
+			this.group.__dirtyRotation = true
+
+			this.group.rotation.x = 2.8
+			this.group.position.y = y-1
+
+
+		}
+
+
 		this.group.position.x = x
-		this.group.position.y = y
 		this.group.position.z = z
-		this.group.rotation.x = -19.4
 		this.group.name = 'tree'
 		// this.group.receiveShadow = true
 		// this.group.castShadow = true
@@ -280,16 +312,16 @@ for (let i = 0; i < 100; i++) {
 	let x = i % 2 === 0 ? generateRandomNumber(25) : generateRandomNumber(-25)
 	let z = generateRandomNumber((getCosFromDegrees(32.957795) * -10000) / 2)
 	let y = getTanFromDegrees(32.957795) * z + 1.5
-	trees.push(new Tree(x, y, z))
+	obstacles.push(new Obstacle(x, y, z))
 }
 
-function spawnTrees() {
-	for (let i = 0; i < trees.length; i++) {
-		scene.add(trees[i])
+function spawnObstacles() {
+	for (let i = 0; i < obstacles.length; i++) {
+		scene.add(obstacles[i])
 	}
 }
 
-spawnTrees()
+spawnObstacles()
 
 function update() {
 	// console.log(hero.mesh.position)
