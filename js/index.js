@@ -306,12 +306,28 @@ function render() {
 		camera.distanceToPlayer = 100
 	}
 
+	if (hasPlayerFallen()) {
+		location.reload()
+	}
+
 	ground.receiveShadow = true
 	ground.castShadow = true
 
 	scene.simulate()
 	renderer.render(scene, camera) //draw
 }
+
+function hasPlayerFallen() {
+	if (
+		hero.mesh.position.y <
+		getTanFromDegrees(32.957795) * hero.mesh.position.z - 20
+	) {
+		return true
+	} else {
+		return false
+	}
+}
+
 function onWindowResize() {
 	//resize & align
 	sceneHeight = window.innerHeight
