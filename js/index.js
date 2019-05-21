@@ -19,9 +19,15 @@ let isTurning = false
 let isGrounded = true
 let isFinished = false
 let groundWidth = 50
+let groundHeight = 10000
 let finish
 let isStarted = false
 let cancel
+let music = new Audio('../assets/winter_music.m4a')
+let ambient = new Audio('../assets/winter_ambient_music.m4a')
+
+music.volume = 0.5
+music.play()
 
 class Player extends THREE.Object3D {
 	constructor(y, x, rotationX) {
@@ -62,7 +68,11 @@ class Player extends THREE.Object3D {
 		scene.add(this.mesh)
 	}
 
-	updatePosition() {}
+	resetPosition() {
+		this.mesh.rotation.y = 0
+		this.mesh.rotation.z = 0
+		this.mesh.rotation.x = -0.4
+	}
 }
 
 class Ending extends THREE.Object3D {
@@ -215,7 +225,7 @@ function init() {
 
 function createScene() {
 	scene = new Physijs.Scene()
-	scene.setGravity(new THREE.Vector3(0, -10, 0))
+	scene.setGravity(new THREE.Vector3(0, -50, 0))
 	scene.fog = new THREE.FogExp2(0xf0fff0, 0.005)
 	camera = new Camera(35, window.innerWidth / window.innerHeight, 0.1, 1000)
 
@@ -291,6 +301,9 @@ function createScene() {
 		}
 	})
 
+	ambient.volume = 0.5
+	ambient.play()
+
 	const texture = new THREE.TextureLoader().load('../assets/slope.jpg')
 	texture.wrapS = THREE.RepeatWrapping
 	texture.wrapT = THREE.RepeatWrapping
@@ -303,7 +316,7 @@ function createScene() {
 	)
 
 	ground = new Physijs.BoxMesh(
-		new THREE.BoxGeometry(groundWidth, 10000),
+		new THREE.BoxGeometry(groundWidth, groundHeight),
 		planeMaterial,
 		0
 	)
@@ -313,7 +326,7 @@ function createScene() {
 	ground.rotateX(-Math.PI / 2 - 10)
 	scene.add(ground)
 
-	const b = (getCosFromDegrees(32.957795) * -10000) / 2
+	const b = (getCosFromDegrees(32.957795) * -groundHeight) / 2
 	finish = new Ending(0, getTanFromDegrees(32.957795) * b, b)
 	finish.rotateX(-3.4)
 
@@ -325,7 +338,7 @@ function createScene() {
 	scene.add(sun)
 	//Set up shadow properties for the sun light
 	sun.shadow.mapSize.width = groundWidth
-	sun.shadow.mapSize.height = (getCosFromDegrees(32.957795) * -10000) / 2
+	sun.shadow.mapSize.height = (getCosFromDegrees(32.957795) * -groundHeight) / 2
 	sun.shadow.camera.near = 0.5
 	sun.shadow.camera.far = 1000
 
@@ -358,7 +371,9 @@ function getSinFromDegrees(degrees) {
 
 for (let i = 0; i < 200; i++) {
 	let x = i % 2 === 0 ? generateRandomNumber(25) : generateRandomNumber(-25)
-	let z = generateRandomNumber((getCosFromDegrees(32.957795) * -10000) / 2)
+	let z = generateRandomNumber(
+		(getCosFromDegrees(32.957795) * -groundHeight) / 2
+	)
 	let y = getTanFromDegrees(32.957795) * z + 1.5
 	obstacles.push(new Obstacle(x, y, z))
 }
@@ -402,13 +417,20 @@ function update() {
 	render()
 }
 function render() {
+	if (!isTurning && hero.mesh.getLinearVelocity().z < -60) {
+		hero.mesh.setLinearVelocity({
+			x: hero.mesh.getLinearVelocity().x,
+			y: hero.mesh.getLinearVelocity().y,
+			z: -40
+		})
+	}
 	if (isFinished) {
 		hero.mesh.setLinearVelocity({ x: 0, y: 0, z: -2 })
 		camera.distanceToPlayer = 100
 	}
 
 	if (hasPlayerFallen()) {
-		location.reload()
+		// location.reload()
 	}
 	ground.receiveShadow = true
 	ground.castShadow = true
@@ -478,14 +500,15 @@ function handleKeyDown(keyEvent) {
 			}
 
 			break
+		case 82:
+			hero.resetPosition()
+			break
 	}
 }
 
 function handleKeyUp(keyEvent) {
 	switch (keyEvent.keyCode) {
 		case 65:
-			isTurning = false
-
 			hero.mesh.setLinearVelocity(
 				new THREE.Vector3(
 					0,
@@ -494,12 +517,12 @@ function handleKeyUp(keyEvent) {
 				)
 			)
 			hero.mesh.setAngularVelocity(new THREE.Vector3(0, 0, 0))
-
+			setTimeout(() => {
+				isTurning = false
+			}, 50)
 			break
 
 		case 68: // "a" key or left arrow key (turn left)
-			isTurning = false
-
 			hero.mesh.setLinearVelocity(
 				new THREE.Vector3(
 					0,
@@ -509,6 +532,9 @@ function handleKeyUp(keyEvent) {
 			)
 			hero.mesh.setAngularVelocity(new THREE.Vector3(0, 0, 0))
 
+			setTimeout(() => {
+				isTurning = false
+			}, 50)
 			break
 	}
 }
