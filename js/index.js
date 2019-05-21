@@ -25,6 +25,7 @@ let isStarted = false
 let cancel
 let music = new Audio('../assets/winter_music.m4a')
 let ambient = new Audio('../assets/winter_ambient_music.m4a')
+let debugFinish = false
 
 music.volume = 0.5
 music.play()
@@ -81,7 +82,7 @@ class Ending extends THREE.Object3D {
 		this.geo = new THREE.Geometry()
 
 		this.trunk = new THREE.CylinderGeometry(100, 100, 2)
-		this.trunk.faces.forEach(f => f.color.set(0x00ff00))
+		this.trunk.faces.forEach(f => f.color.set(0xffffff))
 		this.trunk.translate(0, 0, 0)
 		this.geo.merge(this.trunk)
 
@@ -97,8 +98,6 @@ class Ending extends THREE.Object3D {
 		this.group.position.z = z
 		// this.group.rotation.x = -19.4w
 		this.group.name = 'finish'
-
-		//return this.group
 	}
 
 	addToObject(objectToMergeIn) {
@@ -247,13 +246,17 @@ function createScene() {
 
 	const b = (getCosFromDegrees(32.957795) * -groundHeight) / 2
 	finish = new Ending(0, getTanFromDegrees(32.957795) * b, b)
-	// finish.rotateX(-3.4)
+	finish.rotateX(-3.4)
 
 	finish.addTo(scene)
-	loader.load('../assets/bleacher.gltf', function(gltf) {
-		const bleacher = gltf.scene
-		finish.addToObject(bleacher)
-	})
+	// loader.load('../assets/bleacher.gltf', function(gltf) {
+	// 	const bleacher = gltf.scene
+	// 	bleacher.scale.x = 5
+	// 	bleacher.scale.y = 5
+	// 	bleacher.scale.x = 5
+	// 	bleacher.rotation.x = 0.25
+	// 	finish.addToObject(bleacher)
+	// })
 
 	hero = new Player(1, 1, -0.4)
 	hero.addTo(scene)
@@ -448,6 +451,13 @@ function render() {
 	ground.receiveShadow = true
 	ground.castShadow = true
 
+	if (debugFinish) {
+		hero.mesh.setLinearVelocity({ x: 0, y: 0, z: 0 })
+		camera.position.x = finish.position.x
+		camera.position.y = finish.position.y + 130
+		camera.position.z = finish.position.z + 130
+	}
+
 	scene.simulate()
 	renderer.render(scene, camera) //draw
 }
@@ -474,8 +484,7 @@ function onWindowResize() {
 
 function handleKeyDown(keyEvent) {
 	switch (keyEvent.keyCode) {
-		case 65:
-		case 37: // "a" key or left arrow key (turn left)
+		case 65: // "a" key or left arrow key (turn left)
 			isTurning = true
 
 			hero.mesh.setLinearVelocity(
@@ -511,6 +520,10 @@ function handleKeyDown(keyEvent) {
 			break
 		case 82:
 			hero.resetPosition()
+			break
+
+		case 69:
+			debugFinish = true
 			break
 	}
 }
