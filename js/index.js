@@ -50,6 +50,8 @@ class Player extends THREE.Object3D {
 		this.mesh.position.x = x
 		this.mesh.rotation.x = rotationX
 		this.mesh.__dirtyPosition = true
+		this.mesh.__dirtyRotation = true
+
 		this.mesh.addEventListener(
 			'collision',
 			(other_object, linear_velocity, angular_velocity) => {
@@ -207,7 +209,7 @@ document.addEventListener('click', e => {
 		isStarted = true
 		init()
 
-		cancel = setInterval(incrementSeconds, 1000)
+		cancel = setInterval(incrementSeconds, 10);
 	}
 })
 
@@ -227,7 +229,7 @@ function createScene() {
 	scene.fog = new THREE.FogExp2(0xf0fff0, 0.005)
 	camera = new Camera(35, window.innerWidth / window.innerHeight, 0.1, 1000)
 
-	renderer = new THREE.WebGLRenderer({ alpha: true })
+	renderer = new THREE.WebGLRenderer({ alpha: true, antialias:true })
 	renderer.setClearColor(0x000000, 0)
 	renderer.shadowMap.enabled = true
 	renderer.shadowMap.type = THREE.PCFSoftShadowMap
@@ -271,8 +273,27 @@ function createScene() {
 			isFinished = true
 			document.querySelector('.finish-screen').classList.remove('hidden')
 
-			document.querySelector('.seconds-counter').classList.add('finished-timer')
-			clearInterval(cancel)
+				var highScore = localStorage.getItem('highScore');
+
+				if(highScore) {
+					if(parseInt(highScore) > totalMilliseconds){
+
+						console.log("highScore!!!")
+						document.querySelector('.seconds-counter').classList.add('highscore')
+						localStorage.setItem('highScore', totalMilliseconds)
+
+					}
+				} else {
+
+					console.log("highScore!!!")
+
+					document.querySelector('.seconds-counter').classList.add('highscore')
+					localStorage.setItem('highScore', totalMilliseconds)
+
+				}
+
+				document.querySelector('.seconds-counter').classList.add('finished-timer')
+				clearInterval(cancel)
 
 			// setTimeout(()=>{
 			// 	location.reload()
@@ -361,16 +382,29 @@ function spawnObstacles() {
 	for (let i = 0; i < obstacles.length; i++) {
 		setTimeout(() => {
 			scene.add(obstacles[i])
-		}, 50)
+		}, 10)
 	}
 }
 
-var seconds = 0
-var el = document.querySelector('.seconds-counter')
+var seconds = 0;
+var milliseconds = 0;
+var totalMilliseconds = 0;
+var counter = document.querySelector('.seconds-counter');
+var highscore = document.querySelector('.highscore-counter');
 
 function incrementSeconds() {
-	seconds += 1
-	el.innerText = seconds + 's'
+
+		if(milliseconds >= 100){
+			seconds += 1
+			milliseconds = 0
+		}
+
+		milliseconds += 1;
+		totalMilliseconds += 1;
+
+    counter.innerText = seconds+"."+milliseconds;
+		highscore.innerText = `${localStorage.getItem('highScore')[0]}${localStorage.getItem('highScore')[1]}.${localStorage.getItem('highScore')[2]}${localStorage.getItem('highScore')[3]}`
+
 }
 
 function update() {
