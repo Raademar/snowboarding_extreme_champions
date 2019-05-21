@@ -20,6 +20,8 @@ let isGrounded = true
 let isFinished = false
 let groundWidth = 50
 let finish
+let isStarted = false
+let cancel
 
 class Player extends THREE.Object3D {
 	constructor(y, x, rotationX) {
@@ -95,26 +97,25 @@ class Obstacle extends THREE.Object3D {
 
 		let random = generateRandomNumber(100)
 
-		if(random > 10){
-
+		if (random > 10) {
 			this.level1 = new THREE.ConeGeometry(1.5, 2, 4)
-			this.level1.faces.forEach(f => f.color.set(0xF5F5FD))
+			this.level1.faces.forEach(f => f.color.set(0xf5f5fd))
 			this.level1.translate(0, 5, 0)
 			this.geo.merge(this.level1)
 
 			this.level2 = new THREE.ConeGeometry(2, 2, 4)
-			this.level2.faces.forEach(f => f.color.set(0xA9ADFF))
+			this.level2.faces.forEach(f => f.color.set(0xa9adff))
 			this.level2.translate(0, 4, 0)
 			this.geo.merge(this.level2)
 
 			this.level3 = new THREE.ConeGeometry(3, 2, 4)
 
-			this.level3.faces.forEach(f => f.color.set(0x7079FC))
+			this.level3.faces.forEach(f => f.color.set(0x7079fc))
 			this.level3.translate(0, 3, 0)
 			this.geo.merge(this.level3)
 
 			this.trunk = new THREE.CylinderGeometry(0.5, 0.5, 4)
-			this.trunk.faces.forEach(f => f.color.set(0x7079FC))
+			this.trunk.faces.forEach(f => f.color.set(0x7079fc))
 			this.trunk.translate(0, 0, 0)
 			this.geo.merge(this.trunk)
 
@@ -128,15 +129,11 @@ class Obstacle extends THREE.Object3D {
 
 			this.group.rotation.x = -19.4
 			this.group.position.y = y
-
-
 		} else {
-
 			this.level1 = new THREE.BoxGeometry(6, 1, 15)
-			this.level1.faces.forEach(f => f.color.set(0xA9ADFF))
+			this.level1.faces.forEach(f => f.color.set(0xa9adff))
 			this.level1.translate(0, 1, 0)
 			this.geo.merge(this.level1)
-
 
 			this.group = new Physijs.BoxMesh(
 				this.geo,
@@ -149,11 +146,8 @@ class Obstacle extends THREE.Object3D {
 			this.group.__dirtyRotation = true
 
 			this.group.rotation.x = 2.8
-			this.group.position.y = y-1
-
-
+			this.group.position.y = y - 1
 		}
-
 
 		this.group.position.x = x
 		this.group.position.z = z
@@ -198,10 +192,20 @@ Physijs.scripts.ammo =
 var blob = new Blob([document.querySelector('#physijs_worker').textContent])
 Physijs.scripts.worker = window.URL.createObjectURL(blob)
 
-init()
+document.addEventListener('click', e => {
+	if (!isStarted) {
+		isStarted = true
+		init()
+
+		cancel = setInterval(incrementSeconds, 1000)
+	}
+})
+
 function init() {
 	// set up the scene
 	createScene()
+
+	spawnTrees()
 
 	//call game loop
 	update()
@@ -241,6 +245,29 @@ function createScene() {
 		snowboard.scale.y = 2
 		snowboard.scale.z = 3
 		hero.addToObject(snowboard)
+	})
+
+	hero.mesh.addEventListener('collision', function(
+		other_object,
+		linear_velocity,
+		angular_velocity
+	) {
+		if (other_object.name == 'ground') {
+			isGrounded = true
+		}
+
+		if (other_object.name == 'finish') {
+			console.log('finished!')
+			isFinished = true
+			document.querySelector('.finish-screen').classList.remove('hidden')
+
+			document.querySelector('.seconds-counter').classList.add('finished-timer')
+			clearInterval(cancel)
+
+			// setTimeout(()=>{
+			// 	location.reload()
+			// }, 4000)
+		}
 	})
 
 	const texture = new THREE.TextureLoader().load('../assets/slope.jpg')
@@ -322,6 +349,13 @@ function spawnObstacles() {
 }
 
 spawnObstacles()
+var seconds = 0
+var el = document.querySelector('.seconds-counter')
+
+function incrementSeconds() {
+	seconds += 1
+	el.innerText = seconds + 's'
+}
 
 function update() {
 	// console.log(hero.mesh.position)
@@ -341,6 +375,9 @@ function render() {
 	if (hasPlayerFallen()) {
 		location.reload()
 	}
+	ground.receiveShadow = true
+	ground.castShadow = true
+	ground.name = 'ground'
 
 	ground.receiveShadow = true
 	ground.castShadow = true
@@ -368,27 +405,6 @@ function onWindowResize() {
 	camera.aspect = sceneWidth / sceneHeight
 	camera.updateProjectionMatrix()
 }
-
-ground.name = 'ground'
-
-hero.mesh.addEventListener('collision', function(
-	other_object,
-	linear_velocity,
-	angular_velocity
-) {
-	if (other_object.name == 'ground') {
-		isGrounded = true
-	}
-
-	if (other_object.name == 'finish') {
-		console.log('finished!')
-		isFinished = true
-
-		setTimeout(() => {
-			// location.reload()
-		}, 4000)
-	}
-})
 
 function handleKeyDown(keyEvent) {
 	switch (keyEvent.keyCode) {
