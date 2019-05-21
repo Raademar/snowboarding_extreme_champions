@@ -492,7 +492,8 @@ function handleKeyDown(keyEvent) {
 
 			break
 		case 32:
-			isTurning = true
+
+			isTurning = false
 
 			if (isGrounded) {
 				isGrounded = false
