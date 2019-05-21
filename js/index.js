@@ -205,7 +205,7 @@ function init() {
 	// set up the scene
 	createScene()
 
-	spawnTrees()
+	spawnObstacles()
 
 	//call game loop
 	update()
@@ -348,7 +348,6 @@ function spawnObstacles() {
 	}
 }
 
-spawnObstacles()
 var seconds = 0
 var el = document.querySelector('.seconds-counter')
 
