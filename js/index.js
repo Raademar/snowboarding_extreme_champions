@@ -39,7 +39,7 @@ class Player extends THREE.Object3D {
 		this.material = new THREE.MeshBasicMaterial({
 			color: 0xffffff,
 			transparent: true,
-			opacity: 1
+			opacity: 0
 		})
 		this.mesh = new Physijs.BoxMesh(this.geometry, this.material)
 		this.mesh.componentOf = 'hero'
@@ -69,9 +69,9 @@ class Player extends THREE.Object3D {
 	}
 
 	resetPosition() {
-			isTurning = true
-			this.mesh.__dirtyRotation = true
-			this.mesh.rotation.set(-0.4, 0, 0)
+		isTurning = true
+		this.mesh.__dirtyRotation = true
+		this.mesh.rotation.set(-0.4, 0, 0)
 	}
 }
 
