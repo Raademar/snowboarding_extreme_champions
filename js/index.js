@@ -291,7 +291,9 @@ function createScene() {
 			isFinished = true
 			document.querySelector('.finish-screen').classList.remove('hidden')
 
-			var highScore = localStorage.getItem('highScore')
+			var highScore = localStorage.getItem('highScore') || 2000
+			var playerName = localStorage.getItem('playerName') || 'testingDude'
+			submitNewHighScore(highScore, playerName)
 
 			if (highScore) {
 				if (parseInt(highScore) > totalMilliseconds) {
@@ -392,6 +394,20 @@ function spawnObstacles() {
 			scene.add(obstacles[i])
 		}, 10)
 	}
+}
+
+function submitNewHighScore(time, player) {
+	db.collection('highScore')
+		.add({
+			name: player,
+			time: time
+		})
+		.then(function(docRef) {
+			console.log('Document saved okey with ID: ', docRef.id)
+		})
+		.catch(function(error) {
+			console.error('Error adding document', error)
+		})
 }
 
 var seconds = 0
