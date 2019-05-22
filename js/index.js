@@ -23,6 +23,7 @@ let groundHeight = 10000
 let finish
 let isStarted = false
 let cancel
+let debugFinish = false
 let music = new Audio('../assets/winter_music.m4a')
 let ambient = new Audio('../assets/winter_ambient_music.m4a')
 
@@ -204,13 +205,42 @@ Physijs.scripts.ammo =
 var blob = new Blob([document.querySelector('#physijs_worker').textContent])
 Physijs.scripts.worker = window.URL.createObjectURL(blob)
 
-document.addEventListener('click', e => {
+document.querySelector('.mute-icon').addEventListener('click', e => {
+	document.querySelector('.mute-icon').classList.add('hidden')
+	document.querySelector('.unmute-icon').classList.remove('hidden')
+
+	ambient.pause()
+	music.pause()
+
+})
+
+document.querySelector('.unmute-icon').addEventListener('click', e => {
+	document.querySelector('.unmute-icon').classList.add('hidden')
+	document.querySelector('.mute-icon').classList.remove('hidden')
+
+	ambient.play()
+	music.play()
+
+})
+
+
+document.querySelector('.start-button').addEventListener('click', e => {
 	if (!isStarted) {
+		document.querySelector('.start-screen').classList.add('hidden')
+		document.querySelector('.ui-score').classList.remove('hidden')
+		document.querySelector('.mute-button').classList.remove('hidden')
+
+
 		isStarted = true
+
 		init()
 
 		cancel = setInterval(incrementSeconds, 10);
 	}
+})
+
+document.querySelector('.restart-button').addEventListener('click', e => {
+	location.reload();
 })
 
 function init() {
@@ -347,8 +377,8 @@ function createScene() {
 	orbitControl.addEventListener('change', render)
 	orbitControl.enableZoom = false
 
-	var helper = new THREE.CameraHelper(sun.shadow.camera)
-	scene.add(helper) // enable to see the light cone
+	// var helper = new THREE.CameraHelper(sun.shadow.camera)
+	// scene.add(helper) // enable to see the light cone
 
 	window.addEventListener('resize', onWindowResize, false) //resize callback
 }
@@ -394,7 +424,7 @@ var highscore = document.querySelector('.highscore-counter');
 
 function incrementSeconds() {
 
-		if(milliseconds >= 100){
+		if(milliseconds >= 99){
 			seconds += 1
 			milliseconds = 0
 		}
@@ -427,6 +457,13 @@ function render() {
 	if (isFinished) {
 		hero.mesh.setLinearVelocity({ x: 0, y: 0, z: -2 })
 		camera.distanceToPlayer = 100
+	}
+
+	if(debugFinish){
+		hero.mesh.setLinearVelocity({x:0, y:0, z:0})
+		camera.position.x = finish.position.x
+		camera.position.y = finish.position.y + 130
+		camera.position.z = finish.position.z + 130
 	}
 
 	if (hasPlayerFallen()) {
@@ -501,8 +538,8 @@ function handleKeyDown(keyEvent) {
 			}
 
 			break
-		case 82:
-			hero.resetPosition()
+		case 69:
+			debugFinish = true
 			break
 	}
 }
