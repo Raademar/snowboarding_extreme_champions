@@ -27,11 +27,11 @@ class Player extends THREE.Object3D {
 		this.group = new THREE.Geometry()
 		this.character = {}
 
-		this.geometry = new THREE.BoxGeometry(1, 0.2, 3)
+		this.geometry = new THREE.CylinderGeometry(0.8, 1.4, 4, 5)
 		this.material = new THREE.MeshBasicMaterial({
 			color: 0xffffff,
 			transparent: true,
-			opacity: 0
+			opacity: 1
 		})
 		this.mesh = new Physijs.BoxMesh(this.geometry, this.material)
 		this.mesh.componentOf = 'hero'
@@ -189,7 +189,7 @@ function createScene() {
 	renderer.setSize(window.innerWidth, window.innerHeight)
 	document.body.appendChild(renderer.domElement)
 
-	hero = new Player(1, 1, -0.4)
+	hero = new Player(10, 1, -0.4)
 	hero.addTo(scene)
 	hero.mesh.setCcdMotionThreshold(1)
 
@@ -197,6 +197,7 @@ function createScene() {
 	loader.load('../assets/boy_character/scene.gltf', function(gltf) {
 		const character = gltf.scene
 		character.rotation.y = 1.5
+		character.position.y = -1.9
 		character.scale.x = 0.01
 		character.scale.y = 0.01
 		character.scale.z = 0.01
@@ -204,7 +205,7 @@ function createScene() {
 	})
 	loader.load('../assets/snowboard.gltf', function(gltf) {
 		const snowboard = gltf.scene
-		snowboard.position.y = 0
+		snowboard.position.y = -1.9
 		snowboard.scale.x = 3
 		snowboard.scale.y = 2
 		snowboard.scale.z = 3
@@ -361,7 +362,6 @@ hero.mesh.addEventListener('collision', function(
 function handleKeyDown(keyEvent) {
 	switch (keyEvent.keyCode) {
 		case 65:
-		case 37: // "a" key or left arrow key (turn left)
 			isTurning = true
 
 			hero.mesh.setLinearVelocity(
@@ -394,6 +394,12 @@ function handleKeyDown(keyEvent) {
 				hero.mesh.setLinearVelocity({ x: 0, y: 0, z: -100 })
 			}
 
+			break
+
+		case 82:
+			isTurning = true
+			hero.mesh.__dirtyRotation = true
+			hero.mesh.rotation.set(-0.4, 0, 0)
 			break
 	}
 }
