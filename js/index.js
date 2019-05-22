@@ -302,6 +302,8 @@ function createScene() {
 			console.log('finished!')
 			isFinished = true
 			document.querySelector('.finish-screen').classList.remove('hidden')
+			document.querySelector('.ui-score').classList.add('hidden')
+			document.querySelector('.mute-button').classList.add('hidden')
 
 				var highScore = localStorage.getItem('highScore');
 
