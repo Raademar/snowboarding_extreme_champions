@@ -4,221 +4,8 @@
 		<meta charset="utf-8" />
 		<script src="https://www.gstatic.com/firebasejs/6.0.2/firebase-app.js"></script>
 		<script src="https://www.gstatic.com/firebasejs/6.0.2/firebase-firestore.js"></script>
+		<link rel="stylesheet" href="style.css" />
 		<title>Snowboarding Extreme Champion</title>
-		<style>
-			body {
-				width:100%;
-				height:100vh;
-				margin: 0;
-				background: fixed no-repeat center / cover
-					url('assets/background_winter.jpg');
-			}
-			canvas {
-				width: 100%;
-				height: 100%;
-				background:url('assets/snow.gif');
-				z-index:-1;
-				position:absolute;
-			}
-
-			.finish-screen {
-				height: 100vh;
-				width:100%;
-				position:absolute;
-				z-index:5;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				opacity:1;
-				transition:all 1s ease-in-out;
-			}
-
-			.start-screen {
-				height: 100vh;
-				width:100%;
-				position:absolute;
-				z-index:5;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				box-sizing: border-box;
-				justify-content: flex-end;
-				padding-bottom:40px;
-				opacity:1;
-				transition:all 1s ease-in-out;
-			}
-
-			.highscore-screen {
-				height: 100vh;
-				width:100%;
-				position:absolute;
-				z-index:5;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				box-sizing: border-box;
-				justify-content: space-between;
-				padding:100px 0;
-				opacity:1;
-				transition:all 1s ease-in-out;
-			}
-
-			.start-screen > img {
-				margin:40px 0;
-			}
-
-			img {
-				width:100%;
-				height:100%;
-			}
-
-			button {
-				padding:20px 50px;
-				font-size:1rem;
-				background:none;
-				color:black;
-				border:none;
-				position: relative;
-				z-index: 10;
-				cursor:pointer;
-				margin:0 20px;
-			}
-
-			.start-button {
-				width:150px;
-				height:60px;
-			}
-
-			.highscore-button {
-				width:200px;
-				height:60px;
-			}
-
-			.restart-button {
-				height:60px;
-				width:250px;
-				position:absolute;
-			}
-
-			button > img {
-				position:absolute;
-				top:0;
-				left:0;
-				width:100%;
-				height:100%;
-			}
-
-			.hidden {
-				opacity: 0;
-				display: none;
-			}
-
-			p {
-				font-family: sans-serif;
-				font-size:2.2rem;
-				margin:5px 0;
-			}
-
-			.timer-container {
-				position:absolute;
-				display: flex;
-				flex-direction: column;
-				justify-content: flex-start;
-				padding:50px 25px;
-			}
-
-			.finished-timer {
-				font-size:4rem;
-				color:#222;
-				margin-top:181px;
-				margin-right:65%;
-			}
-
-			.highscore::after {
-				content:'HIGHSCORE';
-				display:block;
-				position:absolute;
-				background:red;
-				color:white;
-				padding:5px;
-				font-size:2rem;
-			}
-
-			.highscore-counter {
-				color:green;
-				font-size:1rem;
-			}
-
-			.ui-score {
-				position: absolute;
-				width:345px;
-				height:auto;
-				top:0;
-				left:-160px;
-				z-index:-2;
-			}
-
-			.mute-button {
-				position:absolute;
-				top:-20px;
-				right:20px;
-				height:100px;
-				width:100px;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				cursor:pointer;
-			}
-
-			.mute-button > img {
-				position: absolute;
-			}
-
-			.mute-background {
-				width:100%;
-				height:100%;
-				position:absolute;
-			}
-
-			.mute-icon, .unmute-icon {
-				width:30px;
-				height:30px;
-			}
-
-			.logo {
-				position:absolute;
-				top:100px;
-				width:50%;
-				height:auto;
-				animation:slide-in 1s ease-in-out forwards;
-			}
-
-			.controls {
-				width:400px;
-				height:auto;
-				padding:20px;
-			}
-
-			.highscore-board {
-				width:500px;
-				height:auto;
-			}
-
-			@keyframes slide-in {
-				from {
-					top:-500px;
-					transform:scale(0.1);
-				}
-
-				to {
-					top:100px;
-					transform:scale(1.2)
-
-				}
-			}
-
-
-		</style>
 	</head>
 	<body>
 		<div class="timer-container">
@@ -228,26 +15,47 @@
 		<img class="ui-score hidden" src="assets/cornerpiece.png" />
 		<div class="mute-button hidden">
 			<img class="mute-background" src="assets/cornerpiece.png" />
-			<img class="mute-icon" src="https://image.flaticon.com/icons/svg/25/25695.svg" width="224" height="224" alt="Volume up interface symbol free icon" title="Volume up interface symbol free icon">
-			<img class="unmute-icon hidden" src="https://image.flaticon.com/icons/svg/60/60750.svg" width="224" height="224" alt="Volume off indicator free icon" title="Volume off indicator free icon">
+			<img
+				class="mute-icon"
+				src="https://image.flaticon.com/icons/svg/25/25695.svg"
+				width="224"
+				height="224"
+				alt="Volume up interface symbol free icon"
+				title="Volume up interface symbol free icon"
+			/>
+			<img
+				class="unmute-icon hidden"
+				src="https://image.flaticon.com/icons/svg/60/60750.svg"
+				width="224"
+				height="224"
+				alt="Volume off indicator free icon"
+				title="Volume off indicator free icon"
+			/>
 		</div>
 		<div class="finish-screen hidden">
 			<img src="assets/finish.png" />
-			<button class="restart-button"><img src="assets/playagain.png" alt=""></button>
+			<button class="restart-button">
+				<img src="assets/playagain.png" alt="" />
+			</button>
 		</div>
 
 		<div class="start-screen">
-			<img class="logo" src="assets/logo.png" alt="">
-			<img class="controls" src="assets/controls.png" alt="">
+			<img class="logo" src="assets/logo.png" alt="" />
+			<img class="controls" src="assets/controls.png" alt="" />
 			<div>
-			<button class="start-button"><img src="assets/play.png" alt=""></button>
-			<button class="highscore-button"><img src="assets/highscorebtn.png" alt=""></button>
+				<button class="start-button">
+					<img src="assets/play.png" alt="" />
+				</button>
+				<button class="highscore-button">
+					<img src="assets/highscorebtn.png" alt="" />
+				</button>
 			</div>
 		</div>
 
 		<div class="highscore-screen hidden">
-			<img class="highscore-board" src="assets/highscore.png" alt="">
-			<button class="start-button"><img src="assets/play.png" alt=""></button>
+			<div class="highscore-container"></div>
+			<!-- <img class="highscore-board" src="assets/highscore.png" alt="" /> -->
+			<button class="start-button"><img src="assets/play.png" alt="" /></button>
 		</div>
 		<script
 			type="module"

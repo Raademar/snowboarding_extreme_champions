@@ -27,6 +27,7 @@ let debugFinish = false
 let music = new Audio('../assets/winter_music.m4a')
 let ambient = new Audio('../assets/winter_ambient_music.m4a')
 const highscores = []
+const highscoreDOMElement = document.querySelector('.highscore-container')
 
 music.volume = 0.5
 music.play()
@@ -220,7 +221,23 @@ function getHighscores() {
 	return highscores
 }
 
+function displayHighscores(array) {
+	array.map((item, index) => {
+		console.log(item)
+		const parsedTime =
+			item.time.toString().substring(0, 2) +
+			'.' +
+			item.time.toString().substring(2)
+		highscoreDOMElement.innerHTML += `
+			<p class="highscore-item">${index + 1}. ${item.name} - ${parsedTime}s</p>
+		`
+	})
+}
+
 getHighscores()
+setTimeout(() => {
+	displayHighscores(highscores)
+}, 1000)
 
 // Physijs.scripts.worker = 'js/physijs_worker.js'
 Physijs.scripts.ammo =
@@ -234,7 +251,6 @@ document.querySelector('.mute-icon').addEventListener('click', e => {
 
 	ambient.pause()
 	music.pause()
-
 })
 
 document.querySelector('.unmute-icon').addEventListener('click', e => {
@@ -243,35 +259,32 @@ document.querySelector('.unmute-icon').addEventListener('click', e => {
 
 	ambient.play()
 	music.play()
-
 })
 
 document.querySelector('.highscore-button').addEventListener('click', e => {
-		document.querySelector('.start-screen').classList.add('hidden')
-		document.querySelector('.highscore-screen').classList.remove('hidden')
+	document.querySelector('.start-screen').classList.add('hidden')
+	document.querySelector('.highscore-screen').classList.remove('hidden')
 })
-
 
 document.querySelectorAll('.start-button').forEach(button => {
 	button.addEventListener('click', e => {
-	if (!isStarted) {
-		document.querySelector('.highscore-screen').classList.add('hidden')
-		document.querySelector('.start-screen').classList.add('hidden')
-		document.querySelector('.ui-score').classList.remove('hidden')
-		document.querySelector('.mute-button').classList.remove('hidden')
+		if (!isStarted) {
+			document.querySelector('.highscore-screen').classList.add('hidden')
+			document.querySelector('.start-screen').classList.add('hidden')
+			document.querySelector('.ui-score').classList.remove('hidden')
+			document.querySelector('.mute-button').classList.remove('hidden')
 
+			isStarted = true
 
-		isStarted = true
+			init()
 
-		init()
-
-		cancel = setInterval(incrementSeconds, 10)
-	}
-})
+			cancel = setInterval(incrementSeconds, 10)
+		}
+	})
 })
 
 document.querySelector('.restart-button').addEventListener('click', e => {
-	location.reload();
+	location.reload()
 })
 
 function init() {
@@ -479,16 +492,20 @@ function incrementSeconds() {
 		milliseconds = 0
 	}
 
-		if(milliseconds >= 99){
-			seconds += 1
-			milliseconds = 0
-		}
+	if (milliseconds >= 99) {
+		seconds += 1
+		milliseconds = 0
+	}
 
-		milliseconds += 1;
-		totalMilliseconds += 1;
+	milliseconds += 1
+	totalMilliseconds += 1
 
-    counter.innerText = seconds+"."+milliseconds;
-		highscore.innerText = `${localStorage.getItem('highScore')[0]}${localStorage.getItem('highScore')[1]}.${localStorage.getItem('highScore')[2]}${localStorage.getItem('highScore')[3]}`
+	counter.innerText = seconds + '.' + milliseconds
+	highscore.innerText = `${localStorage.getItem('highScore')[0]}${
+		localStorage.getItem('highScore')[1]
+	}.${localStorage.getItem('highScore')[2]}${
+		localStorage.getItem('highScore')[3]
+	}`
 
 	counter.innerText = seconds + '.' + milliseconds
 	highscore.innerText = `${localStorage.getItem('highScore')[0]}${
@@ -520,8 +537,8 @@ function render() {
 		camera.distanceToPlayer = 100
 	}
 
-	if(debugFinish){
-		hero.mesh.setLinearVelocity({x:0, y:0, z:0})
+	if (debugFinish) {
+		hero.mesh.setLinearVelocity({ x: 0, y: 0, z: 0 })
 		camera.position.x = finish.position.x
 		camera.position.y = finish.position.y + 130
 		camera.position.z = finish.position.z + 130
@@ -589,7 +606,6 @@ function handleKeyDown(keyEvent) {
 
 			break
 		case 32:
-
 			isTurning = false
 
 			if (isGrounded) {
@@ -600,7 +616,7 @@ function handleKeyDown(keyEvent) {
 			break
 		case 69:
 			debugFinish = true
-      break
+			break
 		case 82:
 			hero.resetPosition()
 			break
