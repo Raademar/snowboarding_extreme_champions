@@ -25,6 +25,7 @@ let isStarted = false
 let cancel
 let music = new Audio('../assets/winter_music.m4a')
 let ambient = new Audio('../assets/winter_ambient_music.m4a')
+const highscores = []
 
 music.volume = 0.5
 music.play()
@@ -204,6 +205,21 @@ class Camera extends THREE.PerspectiveCamera {
 		}
 	}
 }
+
+function getHighscores() {
+	db.collection('highScore')
+		.orderBy('time', 'asc')
+		.limit(5)
+		.get()
+		.then(snapshot => {
+			snapshot.docs.forEach(doc => {
+				highscores.push(doc.data())
+			})
+		})
+	return highscores
+}
+
+getHighscores()
 
 // Physijs.scripts.worker = 'js/physijs_worker.js'
 Physijs.scripts.ammo =
