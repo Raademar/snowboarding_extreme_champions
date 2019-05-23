@@ -362,7 +362,8 @@ function createScene() {
 
 			const highScore = localStorage.getItem('highScore') || 2000
 			// const playerName = localStorage.getItem('playerName') || 'testingDude'
-			const playerName = window.prompt('Nice score bro! Enter your name: ')
+			const playerName =
+				window.prompt('Nice score bro! Enter your name: ') || 'Anon'
 			submitNewHighScore(totalMilliseconds, playerName)
 
 			if (highScore) {

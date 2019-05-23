@@ -129,7 +129,7 @@ p {
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
-	padding: 40px;
+	padding: 50px 25px;
 }
 
 .finished-timer {
@@ -147,6 +147,30 @@ p {
 	color: white;
 	padding: 5px;
 	font-size: 2rem;
+}
+.ui-score {
+	position: absolute;
+	width: 345px;
+	height: auto;
+	top: 0;
+	left: -160px;
+	z-index: -2;
+}
+
+.mute-button {
+	position: absolute;
+	top: -20px;
+	right: 20px;
+	height: 100px;
+	width: 100px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+}
+
+.mute-button > img {
+	position: absolute;
 }
 
 .mute-background {
