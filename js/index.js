@@ -26,6 +26,7 @@ let cancel
 let debugFinish = false
 let music = new Audio('../assets/winter_music.m4a')
 let ambient = new Audio('../assets/winter_ambient_music.m4a')
+const highscores = []
 
 music.volume = 0.5
 music.play()
@@ -40,7 +41,7 @@ class Player extends THREE.Object3D {
 		this.material = new THREE.MeshBasicMaterial({
 			color: 0xffffff,
 			transparent: true,
-			opacity: 1
+			opacity: 0
 		})
 		this.mesh = new Physijs.BoxMesh(this.geometry, this.material)
 		this.mesh.componentOf = 'hero'
@@ -70,9 +71,9 @@ class Player extends THREE.Object3D {
 	}
 
 	resetPosition() {
-			isTurning = true
-			this.mesh.__dirtyRotation = true
-			this.mesh.rotation.set(-0.4, 0, 0)
+		isTurning = true
+		this.mesh.__dirtyRotation = true
+		this.mesh.rotation.set(-0.4, 0, 0)
 	}
 }
 
@@ -206,6 +207,21 @@ class Camera extends THREE.PerspectiveCamera {
 	}
 }
 
+function getHighscores() {
+	db.collection('highScore')
+		.orderBy('time', 'asc')
+		.limit(5)
+		.get()
+		.then(snapshot => {
+			snapshot.docs.forEach(doc => {
+				highscores.push(doc.data())
+			})
+		})
+	return highscores
+}
+
+getHighscores()
+
 // Physijs.scripts.worker = 'js/physijs_worker.js'
 Physijs.scripts.ammo =
 	'https://chandlerprall.github.io/Physijs/examples/js/ammo.js'
@@ -323,7 +339,10 @@ function createScene() {
 			document.querySelector('.ui-score').classList.add('hidden')
 			document.querySelector('.mute-button').classList.add('hidden')
 
-			var highScore = localStorage.getItem('highScore')
+			const highScore = localStorage.getItem('highScore') || 2000
+			// const playerName = localStorage.getItem('playerName') || 'testingDude'
+			const playerName = window.prompt('Nice score bro! Enter your name: ')
+			submitNewHighScore(totalMilliseconds, playerName)
 
 			if (highScore) {
 				if (parseInt(highScore) > totalMilliseconds) {
@@ -424,6 +443,20 @@ function spawnObstacles() {
 			scene.add(obstacles[i])
 		}, 10)
 	}
+}
+
+function submitNewHighScore(time, player) {
+	db.collection('highScore')
+		.add({
+			name: player,
+			time: time
+		})
+		.then(function(docRef) {
+			console.log('Document saved okey with ID: ', docRef.id)
+		})
+		.catch(function(error) {
+			console.error('Error adding document', error)
+		})
 }
 
 var seconds = 0
