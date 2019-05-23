@@ -29,9 +29,6 @@ let ambient = new Audio('../assets/winter_ambient_music.m4a')
 const highscores = []
 const highscoreDOMElement = document.querySelector('.highscore-container')
 
-music.volume = 0.5
-music.play()
-
 class Player extends THREE.Object3D {
 	constructor(y, x, rotationX) {
 		super()
@@ -382,6 +379,8 @@ function createScene() {
 		}
 	})
 
+	music.volume = 0.5
+	music.play()
 	ambient.volume = 0.5
 	ambient.play()
 

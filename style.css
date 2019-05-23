@@ -130,6 +130,7 @@ p {
 	flex-direction: column;
 	justify-content: flex-start;
 	padding: 50px 25px;
+	box-sizing: border-box;
 }
 
 .finished-timer {
