@@ -46,6 +46,21 @@
 				transition:all 1s ease-in-out;
 			}
 
+			.highscore-screen {
+				height: 100vh;
+				width:100%;
+				position:absolute;
+				z-index:5;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				box-sizing: border-box;
+				justify-content: space-between;
+				padding:100px 0;
+				opacity:1;
+				transition:all 1s ease-in-out;
+			}
+
 			.start-screen > img {
 				margin:40px 0;
 			}
@@ -64,10 +79,16 @@
 				position: relative;
 				z-index: 10;
 				cursor:pointer;
+				margin:0 20px;
 			}
 
 			.start-button {
 				width:150px;
+				height:60px;
+			}
+
+			.highscore-button {
+				width:200px;
 				height:60px;
 			}
 
@@ -176,6 +197,11 @@
 				padding:20px;
 			}
 
+			.highscore-board {
+				width:500px;
+				height:auto;
+			}
+
 			@keyframes slide-in {
 				from {
 					top:-500px;
@@ -211,6 +237,14 @@
 		<div class="start-screen">
 			<img class="logo" src="assets/logo.png" alt="">
 			<img class="controls" src="assets/controls.png" alt="">
+			<div>
+			<button class="start-button"><img src="assets/play.png" alt=""></button>
+			<button class="highscore-button"><img src="assets/highscorebtn.png" alt=""></button>
+			</div>
+		</div>
+
+		<div class="highscore-screen hidden">
+			<img class="highscore-board" src="assets/highscore.png" alt="">
 			<button class="start-button"><img src="assets/play.png" alt=""></button>
 		</div>
 		<script
