@@ -246,9 +246,16 @@ document.querySelector('.unmute-icon').addEventListener('click', e => {
 
 })
 
+document.querySelector('.highscore-button').addEventListener('click', e => {
+		document.querySelector('.start-screen').classList.add('hidden')
+		document.querySelector('.highscore-screen').classList.remove('hidden')
+})
 
-document.querySelector('.start-button').addEventListener('click', e => {
+
+document.querySelectorAll('.start-button').forEach(button => {
+	button.addEventListener('click', e => {
 	if (!isStarted) {
+		document.querySelector('.highscore-screen').classList.add('hidden')
 		document.querySelector('.start-screen').classList.add('hidden')
 		document.querySelector('.ui-score').classList.remove('hidden')
 		document.querySelector('.mute-button').classList.remove('hidden')
@@ -260,6 +267,7 @@ document.querySelector('.start-button').addEventListener('click', e => {
 
 		cancel = setInterval(incrementSeconds, 10)
 	}
+})
 })
 
 document.querySelector('.restart-button').addEventListener('click', e => {
