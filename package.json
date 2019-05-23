@@ -15,7 +15,6 @@
 	},
 	"homepage": "https://github.com/Raademar/snowboarding_extreme_champions#readme",
 	"dependencies": {
-		"dotenv": "^8.0.0",
 		"three": "^0.104.0"
 	},
 	"devDependencies": {}

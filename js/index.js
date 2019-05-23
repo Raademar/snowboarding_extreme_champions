@@ -291,9 +291,10 @@ function createScene() {
 			isFinished = true
 			document.querySelector('.finish-screen').classList.remove('hidden')
 
-			var highScore = localStorage.getItem('highScore') || 2000
-			var playerName = localStorage.getItem('playerName') || 'testingDude'
-			submitNewHighScore(highScore, playerName)
+			const highScore = localStorage.getItem('highScore') || 2000
+			// const playerName = localStorage.getItem('playerName') || 'testingDude'
+			const playerName = window.prompt('Nice score bro! Enter your name: ')
+			submitNewHighScore(totalMilliseconds, playerName)
 
 			if (highScore) {
 				if (parseInt(highScore) > totalMilliseconds) {
