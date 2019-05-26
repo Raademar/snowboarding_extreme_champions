@@ -45,4 +45,4 @@ $ git clone https://github.com/Raademar/snowboarding_extreme_champions
 
 #### License
 
-The [MIT](https://github.com/gsvendsen/FastSecurity/blob/master/LICENSE) License
+The [MIT](https://github.com/Raademar/snowboarding_extreme_champions/blob/readme/LICENSE) License
