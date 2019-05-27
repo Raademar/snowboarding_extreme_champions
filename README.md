@@ -75,3 +75,7 @@ $ git clone https://github.com/Raademar/snowboarding_extreme_champions
 #### License
 
 The [MIT](https://github.com/Raademar/snowboarding_extreme_champions/blob/readme/LICENSE) License
+
+#### Link to our feedback of Hanna and Idas project
+
+[Pull request](https://github.com/hannaell/GameOver/pull/35)
