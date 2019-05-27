@@ -56,6 +56,7 @@ $ git clone https://github.com/Raademar/snowboarding_extreme_champions
 - [Added display for high score](https://github.com/Raademar/snowboarding_extreme_champions/pull/12)
 - [Finish area](https://github.com/Raademar/snowboarding_extreme_champions/pull/13)
 - [Fixed some music and padding issues](https://github.com/Raademar/snowboarding_extreme_champions/pull/14)
+- [Updated Readme](https://github.com/Raademar/snowboarding_extreme_champions/pull/15)
 
 #### Testers
 
