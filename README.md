@@ -60,7 +60,7 @@ $ git clone https://github.com/Raademar/snowboarding_extreme_champions
 
 #### Testers
 
-#### Non programmers
+#### Normies
 
 - Hanna White
 - Charlie Persson
