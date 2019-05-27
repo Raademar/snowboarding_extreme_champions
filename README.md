@@ -80,3 +80,13 @@ The [MIT](https://github.com/Raademar/snowboarding_extreme_champions/blob/readme
 #### Link to our feedback of Hanna and Idas project
 
 [Pull request](https://github.com/hannaell/GameOver/pull/35)
+
+#### Feedback
+
+> - index.js: - This file needs more comments, even if some code is self explanatory, outside observers who might want to take part in the open source project need more clarity. 
+> - index.js: Good names on functions and variabels and overal clean code!
+> - index.js:665 - Add one more line to get an equal number to the number of the beast (wat?)
+> - General: Good separating Assets from js files but might need more subcategories to make it more structured like images in images and sound in sound etc.
+> - index.html: This file contains alot of Javascript that also need some more sectioning with comments so new developers can navigate better
+>- style.css: Same here, needs some general comments to section the code so you know where you are for navigation ease.
+>- Overall: clean and consistent code that needs more sectioning and comments!
