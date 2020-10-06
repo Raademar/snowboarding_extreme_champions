@@ -1,7 +1,7 @@
-import Physijs from './physi.js'
-import OrbitControls from './controls/OrbitControls.js'
-import GLTFLoader from './GLTFLoader.js'
-import * as THREE from 'https://unpkg.com/three@0.104.0/build/three.module.js'
+import Physijs from "./physi.js"
+import OrbitControls from "./controls/OrbitControls.js"
+import GLTFLoader from "./GLTFLoader.js"
+import * as THREE from "https://unpkg.com/three@0.104.0/build/three.module.js"
 
 let sceneWidth
 let sceneHeight
@@ -24,10 +24,10 @@ let finish
 let isStarted = false
 let cancel
 let debugFinish = false
-let music = new Audio('../assets/winter_music.m4a')
-let ambient = new Audio('../assets/winter_ambient_music.m4a')
+let music = new Audio("../assets/winter_music.m4a")
+let ambient = new Audio("../assets/winter_ambient_music.m4a")
 const highscores = []
-const highscoreDOMElement = document.querySelector('.highscore-container')
+const highscoreDOMElement = document.querySelector(".highscore-container")
 
 class Player extends THREE.Object3D {
 	constructor(y, x, rotationX) {
@@ -39,10 +39,10 @@ class Player extends THREE.Object3D {
 		this.material = new THREE.MeshBasicMaterial({
 			color: 0xffffff,
 			transparent: true,
-			opacity: 0
+			opacity: 0,
 		})
 		this.mesh = new Physijs.BoxMesh(this.geometry, this.material)
-		this.mesh.componentOf = 'hero'
+		this.mesh.componentOf = "hero"
 
 		this.mesh.castShadow = true
 		this.mesh.receiveShadow = false
@@ -53,10 +53,10 @@ class Player extends THREE.Object3D {
 		this.mesh.__dirtyRotation = true
 
 		this.mesh.addEventListener(
-			'collision',
+			"collision",
 			(other_object, linear_velocity, angular_velocity) => {
-				if (other_object.name === 'tree') {
-					console.log('aj')
+				if (other_object.name === "tree") {
+					console.log("aj")
 				}
 			}
 		)
@@ -81,14 +81,14 @@ class Ending extends THREE.Object3D {
 		this.geo = new THREE.Geometry()
 
 		this.trunk = new THREE.CylinderGeometry(100, 100, 2)
-		this.trunk.faces.forEach(f => f.color.set(0xffffff))
+		this.trunk.faces.forEach((f) => f.color.set(0xffffff))
 		this.trunk.translate(0, 0, 0)
 		this.geo.merge(this.trunk)
 
 		this.group = new Physijs.CylinderMesh(
 			this.geo,
 			new THREE.MeshLambertMaterial({
-				vertexColors: THREE.VertexColors
+				vertexColors: THREE.VertexColors,
 			}),
 			0
 		)
@@ -96,7 +96,7 @@ class Ending extends THREE.Object3D {
 		this.group.position.y = y
 		this.group.position.z = z
 		// this.group.rotation.x = -19.4w
-		this.group.name = 'finish'
+		this.group.name = "finish"
 	}
 
 	addToObject(objectToMergeIn) {
@@ -116,30 +116,30 @@ class Obstacle extends THREE.Object3D {
 
 		if (random > 10) {
 			this.level1 = new THREE.ConeGeometry(1.5, 2, 4)
-			this.level1.faces.forEach(f => f.color.set(0xf5f5fd))
+			this.level1.faces.forEach((f) => f.color.set(0xf5f5fd))
 			this.level1.translate(0, 5, 0)
 			this.geo.merge(this.level1)
 
 			this.level2 = new THREE.ConeGeometry(2, 2, 4)
-			this.level2.faces.forEach(f => f.color.set(0xa9adff))
+			this.level2.faces.forEach((f) => f.color.set(0xa9adff))
 			this.level2.translate(0, 4, 0)
 			this.geo.merge(this.level2)
 
 			this.level3 = new THREE.ConeGeometry(3, 2, 4)
 
-			this.level3.faces.forEach(f => f.color.set(0x7079fc))
+			this.level3.faces.forEach((f) => f.color.set(0x7079fc))
 			this.level3.translate(0, 3, 0)
 			this.geo.merge(this.level3)
 
 			this.trunk = new THREE.CylinderGeometry(0.5, 0.5, 4)
-			this.trunk.faces.forEach(f => f.color.set(0x7079fc))
+			this.trunk.faces.forEach((f) => f.color.set(0x7079fc))
 			this.trunk.translate(0, 0, 0)
 			this.geo.merge(this.trunk)
 
 			this.group = new Physijs.CylinderMesh(
 				this.geo,
 				new THREE.MeshLambertMaterial({
-					vertexColors: THREE.VertexColors
+					vertexColors: THREE.VertexColors,
 				}),
 				0
 			)
@@ -148,14 +148,14 @@ class Obstacle extends THREE.Object3D {
 			this.group.position.y = y
 		} else {
 			this.level1 = new THREE.BoxGeometry(6, 1, 15)
-			this.level1.faces.forEach(f => f.color.set(0xa9adff))
+			this.level1.faces.forEach((f) => f.color.set(0xa9adff))
 			this.level1.translate(0, 1, 0)
 			this.geo.merge(this.level1)
 
 			this.group = new Physijs.BoxMesh(
 				this.geo,
 				new THREE.MeshLambertMaterial({
-					vertexColors: THREE.VertexColors
+					vertexColors: THREE.VertexColors,
 				}),
 				0
 			)
@@ -168,7 +168,7 @@ class Obstacle extends THREE.Object3D {
 
 		this.group.position.x = x
 		this.group.position.z = z
-		this.group.name = 'tree'
+		this.group.name = "tree"
 		// this.group.receiveShadow = true
 		// this.group.castShadow = true
 
@@ -204,12 +204,12 @@ class Camera extends THREE.PerspectiveCamera {
 }
 
 function getHighscores() {
-	db.collection('highScore')
-		.orderBy('time', 'asc')
+	db.collection("highScore")
+		.orderBy("time", "asc")
 		.limit(5)
 		.get()
-		.then(snapshot => {
-			snapshot.docs.forEach(doc => {
+		.then((snapshot) => {
+			snapshot.docs.forEach((doc) => {
 				highscores.push(doc.data())
 			})
 		})
@@ -221,7 +221,7 @@ function displayHighscores(array) {
 		console.log(item)
 		const parsedTime =
 			item.time.toString().substring(0, 2) +
-			'.' +
+			"." +
 			item.time.toString().substring(2)
 		highscoreDOMElement.innerHTML += `
 			<p class="highscore-item">${index + 1}. ${item.name} - ${parsedTime}s</p>
@@ -236,38 +236,38 @@ setTimeout(() => {
 
 // Physijs.scripts.worker = 'js/physijs_worker.js'
 Physijs.scripts.ammo =
-	'https://chandlerprall.github.io/Physijs/examples/js/ammo.js'
-var blob = new Blob([document.querySelector('#physijs_worker').textContent])
+	"https://chandlerprall.github.io/Physijs/examples/js/ammo.js"
+var blob = new Blob([document.querySelector("#physijs_worker").textContent])
 Physijs.scripts.worker = window.URL.createObjectURL(blob)
 
-document.querySelector('.mute-icon').addEventListener('click', e => {
-	document.querySelector('.mute-icon').classList.add('hidden')
-	document.querySelector('.unmute-icon').classList.remove('hidden')
+document.querySelector(".mute-icon").addEventListener("click", (e) => {
+	document.querySelector(".mute-icon").classList.add("hidden")
+	document.querySelector(".unmute-icon").classList.remove("hidden")
 
 	ambient.pause()
 	music.pause()
 })
 
-document.querySelector('.unmute-icon').addEventListener('click', e => {
-	document.querySelector('.unmute-icon').classList.add('hidden')
-	document.querySelector('.mute-icon').classList.remove('hidden')
+document.querySelector(".unmute-icon").addEventListener("click", (e) => {
+	document.querySelector(".unmute-icon").classList.add("hidden")
+	document.querySelector(".mute-icon").classList.remove("hidden")
 
 	ambient.play()
 	music.play()
 })
 
-document.querySelector('.highscore-button').addEventListener('click', e => {
-	document.querySelector('.start-screen').classList.add('hidden')
-	document.querySelector('.highscore-screen').classList.remove('hidden')
+document.querySelector(".highscore-button").addEventListener("click", (e) => {
+	document.querySelector(".start-screen").classList.add("hidden")
+	document.querySelector(".highscore-screen").classList.remove("hidden")
 })
 
-document.querySelectorAll('.start-button').forEach(button => {
-	button.addEventListener('click', e => {
+document.querySelectorAll(".start-button").forEach((button) => {
+	button.addEventListener("click", (e) => {
 		if (!isStarted) {
-			document.querySelector('.highscore-screen').classList.add('hidden')
-			document.querySelector('.start-screen').classList.add('hidden')
-			document.querySelector('.ui-score').classList.remove('hidden')
-			document.querySelector('.mute-button').classList.remove('hidden')
+			document.querySelector(".highscore-screen").classList.add("hidden")
+			document.querySelector(".start-screen").classList.add("hidden")
+			document.querySelector(".ui-score").classList.remove("hidden")
+			document.querySelector(".mute-button").classList.remove("hidden")
 
 			isStarted = true
 
@@ -278,7 +278,7 @@ document.querySelectorAll('.start-button').forEach(button => {
 	})
 })
 
-document.querySelector('.restart-button').addEventListener('click', e => {
+document.querySelector(".restart-button").addEventListener("click", (e) => {
 	location.reload()
 })
 
@@ -317,7 +317,7 @@ function createScene() {
 	hero.addTo(scene)
 	hero.mesh.setCcdMotionThreshold(1)
 
-	loader.load('../assets/boy_character/scene.gltf', function(gltf) {
+	loader.load("../assets/boy_character/scene.gltf", function (gltf) {
 		const character = gltf.scene
 		character.rotation.y = 1.5
 		character.position.y = -1.9
@@ -326,7 +326,7 @@ function createScene() {
 		character.scale.z = 0.01
 		hero.addToObject(character)
 	})
-	loader.load('../assets/snowboard.gltf', function(gltf) {
+	loader.load("../assets/snowboard.gltf", function (gltf) {
 		const snowboard = gltf.scene
 		snowboard.position.y = -1.9
 		snowboard.scale.x = 3
@@ -335,42 +335,42 @@ function createScene() {
 		hero.addToObject(snowboard)
 	})
 
-	hero.mesh.addEventListener('collision', function(
+	hero.mesh.addEventListener("collision", function (
 		other_object,
 		linear_velocity,
 		angular_velocity
 	) {
-		if (other_object.name == 'ground') {
+		if (other_object.name == "ground") {
 			isGrounded = true
 		}
 
-		if (other_object.name == 'finish') {
-			console.log('finished!')
+		if (other_object.name == "finish") {
+			console.log("finished!")
 			isFinished = true
-			document.querySelector('.finish-screen').classList.remove('hidden')
-			document.querySelector('.ui-score').classList.add('hidden')
-			document.querySelector('.mute-button').classList.add('hidden')
+			document.querySelector(".finish-screen").classList.remove("hidden")
+			document.querySelector(".ui-score").classList.add("hidden")
+			document.querySelector(".mute-button").classList.add("hidden")
 
-			const highScore = localStorage.getItem('highScore') || 2000
+			const highScore = localStorage.getItem("highScore") || 2000
 			// const playerName = localStorage.getItem('playerName') || 'testingDude'
 			const playerName =
-				window.prompt('Nice score bro! Enter your name: ') || 'Anon'
+				window.prompt("Nice score bro! Enter your name: ") || "Anon"
 			submitNewHighScore(totalMilliseconds, playerName)
 
 			if (highScore) {
 				if (parseInt(highScore) > totalMilliseconds) {
-					console.log('highScore!!!')
-					document.querySelector('.seconds-counter').classList.add('highscore')
-					localStorage.setItem('highScore', totalMilliseconds)
+					console.log("highScore!!!")
+					document.querySelector(".seconds-counter").classList.add("highscore")
+					localStorage.setItem("highScore", totalMilliseconds)
 				}
 			} else {
-				console.log('highScore!!!')
+				console.log("highScore!!!")
 
-				document.querySelector('.seconds-counter').classList.add('highscore')
-				localStorage.setItem('highScore', totalMilliseconds)
+				document.querySelector(".seconds-counter").classList.add("highscore")
+				localStorage.setItem("highScore", totalMilliseconds)
 			}
 
-			document.querySelector('.seconds-counter').classList.add('finished-timer')
+			document.querySelector(".seconds-counter").classList.add("finished-timer")
 			clearInterval(cancel)
 
 			// setTimeout(()=>{
@@ -384,7 +384,7 @@ function createScene() {
 	ambient.volume = 0.5
 	ambient.play()
 
-	const texture = new THREE.TextureLoader().load('../assets/slope.jpg')
+	const texture = new THREE.TextureLoader().load("../assets/slope.jpg")
 	texture.wrapS = THREE.RepeatWrapping
 	texture.wrapT = THREE.RepeatWrapping
 	texture.repeat.set(10, 1000)
@@ -418,13 +418,13 @@ function createScene() {
 
 	orbitControl = new OrbitControls(camera, renderer.domElement) //helper to rotate around in scene
 	orbitControl.update()
-	orbitControl.addEventListener('change', render)
+	orbitControl.addEventListener("change", render)
 	orbitControl.enableZoom = false
 
 	// var helper = new THREE.CameraHelper(sun.shadow.camera)
 	// scene.add(helper) // enable to see the light cone
 
-	window.addEventListener('resize', onWindowResize, false) //resize callback
+	window.addEventListener("resize", onWindowResize, false) //resize callback
 }
 
 function generateRandomNumber(multiplier) {
@@ -461,24 +461,24 @@ function spawnObstacles() {
 }
 
 function submitNewHighScore(time, player) {
-	db.collection('highScore')
+	db.collection("highScore")
 		.add({
 			name: player,
-			time: time
+			time: time,
 		})
-		.then(function(docRef) {
-			console.log('Document saved okey with ID: ', docRef.id)
+		.then(function (docRef) {
+			console.log("Document saved okey with ID: ", docRef.id)
 		})
-		.catch(function(error) {
-			console.error('Error adding document', error)
+		.catch(function (error) {
+			console.error("Error adding document", error)
 		})
 }
 
 var seconds = 0
 var milliseconds = 0
 var totalMilliseconds = 0
-var counter = document.querySelector('.seconds-counter')
-var highscore = document.querySelector('.highscore-counter')
+var counter = document.querySelector(".seconds-counter")
+var highscore = document.querySelector(".highscore-counter")
 
 function incrementSeconds() {
 	if (milliseconds >= 100) {
@@ -494,19 +494,34 @@ function incrementSeconds() {
 	milliseconds += 1
 	totalMilliseconds += 1
 
-	counter.innerText = seconds + '.' + milliseconds
-	highscore.innerText = `${localStorage.getItem('highScore')[0]}${
-		localStorage.getItem('highScore')[1]
-	}.${localStorage.getItem('highScore')[2]}${
-		localStorage.getItem('highScore')[3]
+	counter.innerText = seconds + "." + milliseconds
+	highscore.innerText = `${localStorage.getItem("highScore")[0]}${
+		localStorage.getItem("highScore")[1]
+	}.${localStorage.getItem("highScore")[2]}${
+		localStorage.getItem("highScore")[3]
 	}`
 
-	counter.innerText = seconds + '.' + milliseconds
-	highscore.innerText = `${localStorage.getItem('highScore')[0]}${
-		localStorage.getItem('highScore')[1]
-	}.${localStorage.getItem('highScore')[2]}${
-		localStorage.getItem('highScore')[3]
+	counter.innerText = seconds + "." + milliseconds
+	highscore.innerText = `${localStorage.getItem("highScore")[0]}${
+		localStorage.getItem("highScore")[1]
+	}.${localStorage.getItem("highScore")[2]}${
+		localStorage.getItem("highScore")[3]
 	}`
+}
+
+function resetGame() {
+	// isStarted = false
+	window.location.reload()
+	// setTimeout(() => {
+	// 	document.querySelector(".highscore-screen").classList.add("hidden")
+	// 	document.querySelector(".start-screen").classList.add("hidden")
+	// 	document.querySelector(".ui-score").classList.remove("hidden")
+	// 	document.querySelector(".mute-button").classList.remove("hidden")
+
+	// 	isStarted = true
+
+	// 	init()
+	// }, 1000)
 }
 
 function update() {
@@ -523,7 +538,7 @@ function render() {
 		hero.mesh.setLinearVelocity({
 			x: hero.mesh.getLinearVelocity().x,
 			y: hero.mesh.getLinearVelocity().y,
-			z: -40
+			z: -40,
 		})
 	}
 	if (isFinished) {
@@ -539,11 +554,11 @@ function render() {
 	}
 
 	if (hasPlayerFallen()) {
-		// location.reload()
+		resetGame()
 	}
 	ground.receiveShadow = true
 	ground.castShadow = true
-	ground.name = 'ground'
+	ground.name = "ground"
 
 	ground.receiveShadow = true
 	ground.castShadow = true
@@ -615,15 +630,11 @@ function handleKeyDown(keyEvent) {
 			}
 
 			break
-		case 69:
-			debugFinish = true
+		case 66:
+			resetGame()
 			break
 		case 82:
 			hero.resetPosition()
-			break
-
-		case 69:
-			debugFinish = true
 			break
 	}
 }
