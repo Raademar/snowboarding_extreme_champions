@@ -554,7 +554,8 @@ function render() {
 	}
 
 	if (hasPlayerFallen()) {
-		resetGame()
+		// Fix reset game.
+		// resetGame()
 	}
 	ground.receiveShadow = true
 	ground.castShadow = true
