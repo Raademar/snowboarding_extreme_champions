@@ -15,7 +15,7 @@
 	},
 	"homepage": "https://github.com/Raademar/snowboarding_extreme_champions#readme",
 	"dependencies": {
-		"three": "^0.104.0"
+		"three": "^0.125.0"
 	},
 	"devDependencies": {}
 }
