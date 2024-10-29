@@ -6,7 +6,7 @@
 #### Introduction
 
 Game Over is an assignment for the Yrgo WU18 class where we created an interactive experience using the canvas element.
-[Snowboard extreme champions](https://sec.netlify.com/)
+[Snowboard extreme champions](https://sec.netlify.app/)
 
 #### Built using
 
